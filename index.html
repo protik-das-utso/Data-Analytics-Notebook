@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Analytics Notebook</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap');
+:root{--font-ui:'Manrope','Segoe UI',Aptos,'Helvetica Neue',sans-serif;--font-display:'Sora','Manrope','Segoe UI',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-ui);font-size:15px;background:radial-gradient(circle at top left,rgba(56,189,248,.16),transparent 24%),radial-gradient(circle at 85% 8%,rgba(168,85,247,.14),transparent 22%),radial-gradient(circle at bottom left,rgba(34,197,94,.12),transparent 20%),linear-gradient(180deg,#060912 0%,#0b1020 38%,#0f172a 100%);color:#e2e8f0;display:flex;min-height:100vh;position:relative;overflow-x:hidden;overflow-y:auto;background-attachment:fixed}
+body::before,body::after{content:'';position:fixed;border-radius:999px;pointer-events:none;z-index:0;filter:blur(36px);opacity:.5}
+body::before{width:30vw;height:30vw;top:-10vw;right:-8vw;background:radial-gradient(circle,rgba(59,130,246,.3),rgba(59,130,246,0) 70%)}
+body::after{width:22vw;height:22vw;bottom:2vw;left:-6vw;background:radial-gradient(circle,rgba(34,197,94,.22),rgba(34,197,94,0) 70%)}
+.sidebar{width:280px;min-width:280px;background:linear-gradient(180deg,rgba(9,13,24,.96),rgba(13,18,32,.92));backdrop-filter:blur(22px);border-right:1px solid rgba(148,163,184,.16);box-shadow:10px 0 36px rgba(0,0,0,.2);padding:1.25rem 0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:10}
+.sidebar-logo{padding:1rem 1.1rem 1.1rem;border-bottom:1px solid rgba(148,163,184,.14);margin-bottom:.55rem;background:linear-gradient(90deg,rgba(59,130,246,.12),rgba(34,197,94,.08),transparent)}
+.sidebar-logo h2{font-family:var(--font-display);font-size:12px;font-weight:800;color:#f8fafc;text-transform:uppercase;letter-spacing:.18em}
+.sidebar-tools{padding:.65rem 1rem 1rem;display:grid;gap:.55rem;border-bottom:1px solid rgba(148,163,184,.14);margin-bottom:.35rem}
+.search-input{width:100%;padding:.58rem .72rem;border-radius:12px;border:1px solid rgba(100,116,139,.4);background:rgba(15,23,42,.85);color:#dbeafe;font-size:12px;outline:none}
+.search-input:focus{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.2)}
+.tool-row{display:flex;gap:.5rem}
+.tool-btn{flex:1;padding:.5rem .65rem;border-radius:999px;border:1px solid rgba(100,116,139,.4);background:rgba(15,23,42,.86);color:#cbd5e1;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s ease}
+.tool-btn:hover{color:#f8fafc;border-color:#60a5fa;transform:translateY(-1px)}
+.chapter-stats{font-size:11px;color:#93c5fd;background:rgba(37,99,235,.14);border:1px solid rgba(96,165,250,.3);padding:.45rem .6rem;border-radius:10px;text-align:center}
+.docs-box{display:grid;grid-template-columns:1fr auto auto;gap:.45rem;align-items:center}
+.doc-select{width:100%;padding:.5rem .58rem;border-radius:10px;border:1px solid rgba(100,116,139,.4);background:rgba(15,23,42,.85);color:#dbeafe;font-size:11.5px;outline:none}
+.doc-select:focus{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.2)}
+.tool-btn.secondary{flex:0 0 auto;padding:.5rem .62rem}
+.doc-note{font-size:11px;color:#9fb0c9;line-height:1.5}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 1rem;cursor:pointer;font-size:13px;color:#a8b3c7;border-left:3px solid transparent;border-radius:0 16px 16px 0;margin-right:10px;transition:transform .16s ease,background .16s ease,color .16s ease,border-color .16s ease,box-shadow .16s ease}
+.nav-item:hover{color:#f8fafc;background:linear-gradient(90deg,rgba(37,40,64,.95),rgba(37,40,64,.55));transform:translateX(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.nav-item.active{color:#dbeafe;border-left-color:#38bdf8;background:linear-gradient(90deg,rgba(30,41,59,.98),rgba(30,41,59,.72));font-weight:600}
+.nav-item.hidden{display:none}
+.nav-item.bookmarked{border-left-color:#f59e0b;color:#fde68a}
+.nav-num{font-size:11px;color:#7c8aa3;min-width:20px;font-family:'Courier New',monospace;font-weight:700}
+.nav-item.active .nav-num{color:#7dd3fc}
+.content{flex:1;min-width:0;margin-left:280px;padding:clamp(1.25rem,2vw,2.4rem);width:calc(100vw - 280px);max-width:none;position:relative;z-index:1;display:flex;flex-direction:column;gap:1.2rem}
+.chapter{display:none;width:100%;background:linear-gradient(180deg,rgba(15,23,42,.9),rgba(10,14,24,.84));border:1px solid rgba(148,163,184,.16);border-radius:30px;padding:2rem 2rem 1.6rem;box-shadow:0 28px 80px rgba(2,6,23,.42),inset 0 1px 0 rgba(255,255,255,.03);backdrop-filter:blur(14px);position:relative;overflow:hidden}
+.chapter::before{content:'';position:absolute;inset:0 0 auto 0;height:5px;background:linear-gradient(90deg,#38bdf8,#22c55e,#a855f7)}
+.chapter.active{display:block}
+.progress-wrap{position:fixed;top:0;left:280px;right:0;height:4px;background:rgba(30,33,53,.62);z-index:100;backdrop-filter:blur(10px);box-shadow:0 1px 0 rgba(255,255,255,.05)}
+.progress-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#22c55e,#8b5cf6);transition:width .4s ease}
+.ch-tag{font-size:11px;font-weight:800;color:#93c5fd;background:rgba(59,130,246,.14);padding:5px 13px;border-radius:999px;display:inline-block;margin-bottom:.75rem;border:1px solid rgba(59,130,246,.3);letter-spacing:.08em;box-shadow:0 12px 25px rgba(59,130,246,.08)}
+.ch-title{font-family:var(--font-display);font-size:clamp(30px,3vw,40px);font-weight:800;margin-bottom:.55rem;color:#f8fafc;letter-spacing:-.04em;line-height:1.08}
+.ch-desc{font-size:15px;color:#a7b2c6;line-height:1.75;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid rgba(148,163,184,.14);max-width:90ch}
+.chapter-meta{display:flex;flex-wrap:wrap;gap:.55rem;margin-bottom:1rem}
+.meta-btn{padding:.42rem .76rem;border-radius:999px;background:rgba(15,23,42,.8);border:1px solid rgba(100,116,139,.4);color:#cbd5e1;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s ease}
+.meta-btn:hover{border-color:#60a5fa;color:#e2e8f0}
+.meta-btn.done{border-color:#22c55e;color:#bbf7d0;background:rgba(34,197,94,.14)}
+.meta-btn.starred{border-color:#f59e0b;color:#fde68a;background:rgba(245,158,11,.12)}
+.section-title{font-family:var(--font-display);display:flex;align-items:center;gap:.6rem;font-size:12px;font-weight:800;margin:1.65rem 0 .8rem;color:#d6e1f1;text-transform:uppercase;letter-spacing:.11em}
+.section-title::before{content:'';width:24px;height:2px;border-radius:999px;background:linear-gradient(90deg,#3b82f6,#8b5cf6)}
+.front-hero{margin:.2rem 0 1.2rem;padding:1rem 1.05rem;border-radius:20px;background:linear-gradient(135deg,rgba(30,64,175,.22),rgba(14,116,144,.2),rgba(22,163,74,.16));border:1px solid rgba(125,211,252,.24);box-shadow:0 18px 36px rgba(2,6,23,.2)}
+.front-hero h3{font-family:var(--font-display);font-size:19px;line-height:1.35;color:#f8fafc;margin-bottom:.35rem;letter-spacing:-.02em}
+.front-hero p{font-size:13.5px;color:#d5e6fb;max-width:none;margin:.2rem 0 .75rem}
+.front-badges{display:flex;flex-wrap:wrap;gap:.45rem}
+.front-badge{padding:.28rem .58rem;border-radius:999px;background:rgba(15,23,42,.55);border:1px solid rgba(148,163,184,.24);font-size:11px;color:#bfdbfe}
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.7rem;margin:.55rem 0 1rem}
+.quick-card{padding:.78rem .82rem;border-radius:14px;background:rgba(15,23,42,.68);border:1px solid rgba(148,163,184,.16)}
+.quick-card h4{font-size:12px;color:#f8fafc;margin-bottom:.25rem;text-transform:uppercase;letter-spacing:.06em}
+.quick-card p{font-size:12.5px;color:#b7c8df;line-height:1.6;max-width:none}
+.note,.warn,.tip{padding:1rem 1.1rem;border-radius:18px;font-size:13px;margin:.85rem 0;line-height:1.75;box-shadow:0 14px 34px rgba(2,6,23,.2);border:1px solid rgba(255,255,255,.04)}
+.note{background:linear-gradient(180deg,rgba(59,130,246,.15),rgba(59,130,246,.07));border-left:3px solid #60a5fa;color:#d6e9ff}
+.warn{background:linear-gradient(180deg,rgba(245,158,11,.16),rgba(245,158,11,.08));border-left:3px solid #f59e0b;color:#fde68a}
+.tip{background:linear-gradient(180deg,rgba(34,197,94,.16),rgba(34,197,94,.08));border-left:3px solid #22c55e;color:#d3f9d8}
+.workflow{list-style:none;counter-reset:wf;margin:.9rem 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.95rem}
+.workflow li{counter-increment:wf;position:relative;padding:1rem 1rem 1rem 3.2rem;background:linear-gradient(180deg,rgba(15,23,42,.78),rgba(15,23,42,.58));border:1px solid rgba(148,163,184,.14);border-radius:18px;color:#d6deeb;line-height:1.65;box-shadow:inset 0 1px 0 rgba(255,255,255,.02),0 12px 28px rgba(2,6,23,.16);min-height:132px}
+.workflow li::before{content:counter(wf);position:absolute;left:.9rem;top:1rem;width:1.65rem;height:1.65rem;background:linear-gradient(135deg,#38bdf8,#22c55e);color:#fff;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;box-shadow:0 10px 24px rgba(56,189,248,.22)}
+.workflow strong{display:block;color:#f8fafc;margin-bottom:.15rem}
+.workflow span{display:block;color:#a6b4ca}
+.code-block{position:relative;margin:1rem 0 1.2rem}
+.code-label{font-size:11px;color:#94a3b8;margin-bottom:4px;font-family:'Courier New',monospace;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.code-block pre{background:linear-gradient(180deg,#07111f,#0b1221 52%,#090f1b);border:1px solid #263246;border-radius:18px;padding:1.2rem 1.35rem;font-family:'Courier New',Consolas,monospace;font-size:13px;line-height:1.8;overflow-x:auto;color:#e5eef9;box-shadow:0 18px 38px rgba(2,6,23,.34),inset 0 1px 0 rgba(255,255,255,.04)}
+.code-block.lang-python .code-label{color:#93c5fd}
+.code-block.lang-python pre{background:linear-gradient(180deg,rgba(8,16,31,.98),rgba(11,18,36,.96) 52%,rgba(10,15,25,.96));border-color:rgba(96,165,250,.3);color:#dbeafe;box-shadow:0 18px 38px rgba(2,6,23,.34),inset 0 1px 0 rgba(255,255,255,.04),0 0 0 1px rgba(96,165,250,.06)}
+.code-block.lang-terminal .code-label{color:#86efac}
+.code-block.lang-terminal pre{background:linear-gradient(180deg,rgba(8,24,16,.98),rgba(8,20,16,.96) 52%,rgba(7,18,14,.96));border-color:rgba(74,222,128,.28);color:#dcfce7;box-shadow:0 18px 38px rgba(2,6,23,.34),inset 0 1px 0 rgba(255,255,255,.04),0 0 0 1px rgba(74,222,128,.06)}
+.code-block.lang-layout .code-label{color:#fcd34d}
+.code-block.lang-layout pre{background:linear-gradient(180deg,rgba(24,18,8,.98),rgba(22,17,8,.96) 52%,rgba(18,14,7,.96));border-color:rgba(251,191,36,.26);color:#fffbeb;box-shadow:0 18px 38px rgba(2,6,23,.34),inset 0 1px 0 rgba(255,255,255,.04),0 0 0 1px rgba(251,191,36,.06)}
+.code-block.lang-generic pre{border-color:#334155}
+.copy-btn{position:absolute;top:16px;right:12px;background:rgba(15,23,42,.92);border:1px solid #2d3a55;border-radius:999px;padding:4px 10px;font-size:11px;cursor:pointer;color:#a8b3c7;font-family:inherit;transition:all .15s ease}
+.copy-btn:hover{background:#1e293b;color:#f8fafc;border-color:#38bdf8;transform:translateY(-1px)}
+.kw{color:#f472b6}.fn{color:#7dd3fc}.st{color:#86efac}.cm{color:#94a3b8;font-style:italic}.num{color:#fbbf24}.op{color:#fb7185}
+.steps{list-style:none;counter-reset:step}
+.steps li{counter-increment:step;padding:.75rem 0 .75rem 2.7rem;position:relative;font-size:13px;color:#d0d8e7;line-height:1.7;border-bottom:1px solid rgba(30,41,59,.9)}
+.steps li::before{content:counter(step);position:absolute;left:0;top:.75rem;width:20px;height:20px;background:linear-gradient(135deg,rgba(56,189,248,.36),rgba(168,85,247,.36));color:#f8fafc;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.nav-footer{display:flex;justify-content:space-between;align-items:center;margin-top:2rem;padding-top:1.4rem;border-top:1px solid rgba(148,163,184,.14)}
+.nav-btn{padding:9px 20px;border:1px solid #2d3a55;border-radius:999px;cursor:pointer;font-size:13px;color:#a8b3c7;background:rgba(15,23,42,.92);font-family:inherit;transition:all .15s ease;box-shadow:0 8px 18px rgba(0,0,0,.14)}
+.nav-btn:hover{background:#1e293b;color:#f8fafc;border-color:#38bdf8;transform:translateY(-1px)}
+.nav-btn.primary{background:rgba(59,130,246,.2);border-color:#3b82f6;color:#93c5fd;font-weight:700}
+.nav-btn.primary:hover{background:rgba(59,130,246,.35)}
+table.ref{width:100%;border-collapse:collapse;font-size:12.5px;margin:.9rem 0;border-radius:18px;overflow:hidden;background:rgba(15,23,42,.42);box-shadow:0 16px 34px rgba(2,6,23,.14)}
+table.ref th{background:rgba(15,23,42,.96);padding:10px 12px;text-align:left;font-weight:700;border:1px solid rgba(148,163,184,.14);color:#d6deeb;font-size:11px;text-transform:uppercase;letter-spacing:.07em}
+table.ref td{padding:10px 12px;border:1px solid rgba(148,163,184,.12);color:#a7b2c6;vertical-align:top}
+table.ref tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+table.ref td code{font-family:'Courier New',monospace;font-size:12px;color:#93c5fd}
+p{font-size:14px;color:#a7b2c6;line-height:1.75;margin:.45rem 0;max-width:90ch}
+.mistakes{list-style:none;margin:.55rem 0 1rem;padding:0;display:grid;gap:.55rem}
+.mistakes li{padding:.72rem .86rem;background:linear-gradient(180deg,rgba(127,29,29,.22),rgba(127,29,29,.11));border:1px solid rgba(248,113,113,.34);border-radius:12px;color:#fecaca;font-size:12.5px;line-height:1.65}
+.practice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.8rem;margin:.8rem 0}
+.practice-card{background:linear-gradient(180deg,rgba(15,23,42,.78),rgba(15,23,42,.54));border:1px solid rgba(148,163,184,.15);border-radius:14px;padding:.85rem}
+.practice-card h4{font-size:12px;color:#e2e8f0;margin-bottom:.45rem;text-transform:uppercase;letter-spacing:.07em}
+.practice-card p{font-size:12.5px;color:#b6c2d8;max-width:none}
+.cheat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:.75rem;margin:.8rem 0 1rem}
+.cheat-item{background:rgba(15,23,42,.72);border:1px solid rgba(96,165,250,.22);border-radius:12px;padding:.65rem .76rem;font-size:12px;color:#c8d4ea}
+.cheat-item code{color:#7dd3fc}
+
+body.light-theme{background:linear-gradient(180deg,#f8fbff 0%,#eff6ff 100%);color:#0f172a}
+body.light-theme .sidebar{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(248,250,252,.94));border-right:1px solid rgba(148,163,184,.3)}
+body.light-theme .sidebar-logo h2,body.light-theme .ch-title{color:#0f172a}
+body.light-theme .chapter{background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(241,245,249,.93));border-color:rgba(148,163,184,.3)}
+body.light-theme .ch-desc,body.light-theme p{color:#334155}
+body.light-theme .sidebar-logo{background:linear-gradient(90deg,rgba(59,130,246,.14),rgba(16,185,129,.1),transparent);border-bottom-color:rgba(148,163,184,.28)}
+body.light-theme .search-input,
+body.light-theme .doc-select{background:#ffffff;color:#0f172a;border-color:#cbd5e1}
+body.light-theme .search-input:focus,
+body.light-theme .doc-select:focus{border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.16)}
+body.light-theme .tool-btn{background:#ffffff;color:#334155;border-color:#cbd5e1}
+body.light-theme .tool-btn:hover{background:#eff6ff;color:#0f172a;border-color:#60a5fa}
+body.light-theme .chapter-stats{background:rgba(37,99,235,.1);color:#1d4ed8;border-color:rgba(59,130,246,.3)}
+body.light-theme .doc-note{color:#475569}
+body.light-theme .nav-item{color:#334155}
+body.light-theme .nav-item:hover{background:linear-gradient(90deg,rgba(226,232,240,.9),rgba(226,232,240,.52));color:#0f172a}
+body.light-theme .nav-item.active{color:#0f172a;background:linear-gradient(90deg,rgba(219,234,254,.95),rgba(219,234,254,.7))}
+body.light-theme .nav-num{color:#64748b}
+body.light-theme .chapter::before{background:linear-gradient(90deg,#2563eb,#0ea5e9,#16a34a)}
+body.light-theme .front-hero{background:linear-gradient(135deg,rgba(191,219,254,.75),rgba(186,230,253,.7),rgba(220,252,231,.62));border-color:rgba(96,165,250,.45)}
+body.light-theme .front-hero h3{color:#0f172a}
+body.light-theme .front-hero p{color:#1e3a8a}
+body.light-theme .front-badge{background:rgba(255,255,255,.82);color:#1e3a8a;border-color:rgba(147,197,253,.9)}
+body.light-theme .quick-card{background:rgba(255,255,255,.88);border-color:#cbd5e1}
+body.light-theme .quick-card h4{color:#0f172a}
+body.light-theme .quick-card p{color:#475569}
+body.light-theme .section-title{color:#1e293b}
+body.light-theme .section-title::before{background:linear-gradient(90deg,#2563eb,#0ea5e9)}
+body.light-theme .note{background:linear-gradient(180deg,rgba(219,234,254,.9),rgba(239,246,255,.9));color:#1e3a8a;border-left-color:#3b82f6;border-color:rgba(147,197,253,.55)}
+body.light-theme .warn{background:linear-gradient(180deg,rgba(254,240,138,.42),rgba(254,249,195,.52));color:#854d0e;border-left-color:#f59e0b;border-color:rgba(245,158,11,.36)}
+body.light-theme .tip{background:linear-gradient(180deg,rgba(220,252,231,.84),rgba(236,253,245,.9));color:#166534;border-left-color:#16a34a;border-color:rgba(74,222,128,.42)}
+body.light-theme .workflow li{background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(248,250,252,.92));border-color:#cbd5e1;color:#334155;box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 10px 22px rgba(148,163,184,.18)}
+body.light-theme .workflow strong{color:#0f172a}
+body.light-theme .workflow span{color:#475569}
+body.light-theme .code-label{color:#475569}
+body.light-theme .code-block pre{background:linear-gradient(180deg,#f8fafc,#eef2ff);color:#1e293b;border-color:#cbd5e1}
+body.light-theme table.ref{background:rgba(255,255,255,.88);box-shadow:0 12px 26px rgba(148,163,184,.18)}
+body.light-theme table.ref th{background:#f1f5f9;color:#334155;border-color:#cbd5e1}
+body.light-theme table.ref td{color:#334155;border-color:#dbe3ee}
+body.light-theme table.ref tr:nth-child(even) td{background:rgba(248,250,252,.7)}
+body.light-theme table.ref td code{color:#1d4ed8}
+body.light-theme .mistakes li{background:linear-gradient(180deg,rgba(254,226,226,.78),rgba(254,242,242,.82));color:#991b1b;border-color:rgba(248,113,113,.45)}
+body.light-theme .cheat-item{background:rgba(255,255,255,.9);border-color:#bfdbfe;color:#334155}
+body.light-theme .cheat-item code{color:#1d4ed8}
+body.light-theme .nav-btn{background:#ffffff;color:#334155;border-color:#cbd5e1}
+body.light-theme .nav-btn:hover{background:#eff6ff;color:#0f172a;border-color:#60a5fa}
+body.light-theme .nav-btn.primary{background:rgba(37,99,235,.12);color:#1d4ed8;border-color:#60a5fa}
+body.light-theme .nav-btn.primary:hover{background:rgba(37,99,235,.2)}
+body.light-theme .meta-btn{background:#ffffff;color:#334155;border-color:#cbd5e1}
+body.light-theme .meta-btn:hover{color:#0f172a;border-color:#60a5fa}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:#0f1117}
+::-webkit-scrollbar-thumb{background:#364152;border-radius:3px}
+@media (max-width: 960px){
+    body{display:block}
+    .sidebar{position:relative;width:100%;min-width:0;height:auto;border-right:none;border-bottom:1px solid rgba(148,163,184,.14)}
+    .progress-wrap{left:0}
+    .content{margin-left:0;width:100%;padding:1rem}
+    .chapter{border-radius:22px;padding:1.3rem}
+    .workflow{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<div class="sidebar">
+  <div class="sidebar-logo"><h2>Data Analytics Notebook</h2></div>
+    <div class="sidebar-tools">
+        <input id="chapterSearch" class="search-input" type="text" placeholder="Search chapter...">
+        <div class="tool-row">
+            <button id="toggleTheme" class="tool-btn">Toggle Theme</button>
+            <button id="resetProgress" class="tool-btn">Reset Progress</button>
+        </div>
+        <div class="docs-box">
+            <select id="docTemplate" class="doc-select" aria-label="Documentation template">
+                <option value="readme">README template</option>
+                <option value="dictionary">Data dictionary template</option>
+                <option value="analysis">Analysis log template</option>
+            </select>
+            <button id="copyDocTemplate" class="tool-btn secondary">Copy</button>
+            <button id="downloadDocTemplate" class="tool-btn secondary">Save</button>
+        </div>
+        <div class="doc-note">Copy reusable documentation templates for each new project.</div>
+        <div id="chapterStats" class="chapter-stats">Completed: 0%</div>
+    </div>
+  <div id="nav"></div>
+</div>
+<div class="content" id="chapters"></div>
+
+<script>
+const chapters = [
+{tag:"Chapter 01 — Setup",title:"Environment & Libraries",desc:"Install and import all essential Python libraries for data analytics. Copy this template at the start of every project.",
+content:`<div class="front-hero">
+<h3>Clear Start for Every Analysis Project</h3>
+<p>This notebook is your step-by-step system. Start with context, inspect data quality, then clean, analyze, validate, and report. Follow the same order every time for reliable results.</p>
+<div class="front-badges">
+<span class="front-badge">Beginner friendly</span>
+<span class="front-badge">End-to-end workflow</span>
+<span class="front-badge">Reusable template</span>
+</div>
+</div>
+<div class="section-title">1.0 Quick start in 2 minutes</div>
+<div class="quick-grid">
+<div class="quick-card"><h4>Step A</h4><p>Write the business question in one sentence and define the KPI.</p></div>
+<div class="quick-card"><h4>Step B</h4><p>Load data and run shape, info, null, and duplicate checks first.</p></div>
+<div class="quick-card"><h4>Step C</h4><p>Use the scenario guide below to choose the right method quickly.</p></div>
+<div class="quick-card"><h4>Step D</h4><p>Finish with clear findings, limitations, and next actions.</p></div>
+</div>
+<div class="section-title">1.1 How to use this notebook</div>
+<div class="note"><strong>Use this notebook as a repeatable analysis process.</strong> For every dataset, move in the same order: define the question, understand the source, inspect the raw data, clean carefully, explore patterns, test ideas, and report the result clearly. Do not jump to charts or modeling before you know what the data contains.</div>
+<div class="section-title">1.2 Analysis workflow</div>
+<ol class="workflow">
+<li><strong>Define the question</strong><span>Write down the exact problem you want to solve, the decision it supports, and the key metric you care about.</span></li>
+<li><strong>Understand the dataset</strong><span>Check where the data came from, what each row represents, the date range, the unit of measure, and the main column meanings.</span></li>
+<li><strong>Inspect the raw data</strong><span>Look at shape, columns, dtypes, missing values, duplicates, and unusual values before making changes.</span></li>
+<li><strong>Protect the original data</strong><span>Create a raw backup and work on a copy so you can always compare your cleaned version with the source.</span></li>
+<li><strong>Clean with intention</strong><span>Fix types, standardize text, handle missing values, remove duplicates, and decide how outliers should be treated.</span></li>
+<li><strong>Explore patterns</strong><span>Use descriptive statistics, grouped summaries, and visualizations to understand trends, segments, and relationships.</span></li>
+<li><strong>Validate findings</strong><span>Ask whether the results make sense, check edge cases, and confirm important conclusions with more than one method.</span></li>
+<li><strong>Summarize the story</strong><span>Finish with clear insights, limitations, next steps, and the business recommendation that follows from the data.</span></li>
+</ol>
+<div class="section-title">1.3 Scenario guide</div>
+<table class="ref">
+<tr><th>Scenario</th><th>Use this</th><th>Why</th></tr>
+<tr><td>You are seeing the dataset for the first time</td><td><code>df.shape</code>, <code>df.head()</code>, <code>df.info()</code>, <code>df.isnull().sum()</code></td><td>These tell you what the data looks like, what types exist, and whether the data needs cleaning before analysis.</td></tr>
+<tr><td>The data has missing values</td><td>Mean for balanced numeric data, median for skewed numeric data, mode or <code>Unknown</code> for categories</td><td>Different fill methods work better depending on the shape and meaning of the column.</td></tr>
+<tr><td>You want to compare groups</td><td>Bar chart, boxplot, t-test, or ANOVA</td><td>These help you compare values across departments, regions, age groups, or categories.</td></tr>
+<tr><td>You want to study trend over time</td><td>Line chart, rolling average, date features like month or weekday</td><td>Time-based data is easier to understand when you keep the order and show movement across dates.</td></tr>
+<tr><td>The data is skewed or has outliers</td><td>Median, IQR clipping, log transform</td><td>These reduce the effect of extreme values and give a more stable summary.</td></tr>
+<tr><td>You want to combine multiple files</td><td><code>pd.merge()</code> for related tables, <code>pd.concat()</code> for stacking similar tables</td><td>Merge is for matching keys; concat is for adding more rows of the same structure.</td></tr>
+<tr><td>You need a dashboard or report</td><td>Pivot table, groupby summary, export to Excel/CSV, clear chart labels</td><td>Stakeholders need summarized and readable outputs, not raw row-level data.</td></tr>
+<tr><td>You want to predict a category</td><td>Logistic Regression, Random Forest Classifier, F1 score, ROC-AUC</td><td>Use classification methods when the target is a label like yes/no or churn/not churn.</td></tr>
+<tr><td>You want to predict a number</td><td>Linear Regression, Random Forest Regressor, MAE, RMSE</td><td>Use regression when the target is continuous, such as revenue, price, or demand.</td></tr>
+</table>
+<div class="section-title">1.4 What to write before analysis</div>
+<div class="tip">Record the source, the date you received the file, the expected grain of the data, the target variable, and the most important columns. Also write the business goal in one sentence. This gives you a clear reference when you later explain why you cleaned, grouped, filtered, or modeled the data in a certain way.</div>
+<div class="section-title">1.5 When to use common statistics</div>
+<table class="ref">
+<tr><th>Statistic</th><th>When to use</th><th>Why use it</th><th>When to skip</th></tr>
+<tr><td>Mean</td><td>Data is fairly symmetric and has no extreme outliers</td><td>Shows the average value clearly</td><td>Skip for skewed data, salary, income, house prices, or data with big outliers</td></tr>
+<tr><td>Median</td><td>Data is skewed or contains outliers</td><td>Gives the middle value and is resistant to extreme values</td><td>Skip only if you need a pure arithmetic average for a balanced distribution</td></tr>
+<tr><td>Mode</td><td>Need the most common category or value</td><td>Helps with categorical data and repeated values</td><td>Skip when every value is almost unique or the category has too many levels</td></tr>
+<tr><td>Standard deviation</td><td>You want to measure spread around the mean</td><td>Shows how consistent or variable the data is</td><td>Skip if the mean is not a meaningful center because the distribution is heavily skewed</td></tr>
+<tr><td>Percentiles / quantiles</td><td>You want thresholds, ranks, or segment cutoffs</td><td>Useful for top 10%, quartiles, and outlier boundaries</td><td>Skip if you only need a simple summary and not a split of the data</td></tr>
+<tr><td>Correlation</td><td>You want to check whether two numeric variables move together</td><td>Quick way to identify related variables</td><td>Skip for causal claims, categorical-only data, or non-linear relationships without more testing</td></tr>
+<tr><td>T-test / ANOVA</td><td>You want to compare group means</td><td>Tests whether differences are likely real or due to chance</td><td>Skip if the data is not numeric, groups are too small, or assumptions are badly violated</td></tr>
+<tr><td>Chi-square</td><td>You want to test association between categorical variables</td><td>Checks whether categories are independent</td><td>Skip for continuous numeric variables</td></tr>
+</table>
+<div class="section-title">1.6 Install libraries</div>
+<div class="note">Run these once in your terminal or first Jupyter cell.</div>
+<div class="code-block"><div class="code-label">terminal</div><pre>pip install pandas numpy matplotlib seaborn scipy scikit-learn plotly openpyxl</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">1.7 Standard imports — copy every project</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># === CORE ===</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># === VISUALIZATION ===</span>
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+<span class="kw">import</span> plotly.express <span class="kw">as</span> px
+
+<span class="cm"># === STATISTICS ===</span>
+<span class="kw">from</span> scipy <span class="kw">import</span> stats
+
+<span class="cm"># === MACHINE LEARNING ===</span>
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split, cross_val_score
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, MinMaxScaler, LabelEncoder
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, classification_report
+
+<span class="cm"># === DISPLAY SETTINGS ===</span>
+pd.set_option(<span class="st">'display.max_columns'</span>, None)
+pd.set_option(<span class="st">'display.max_rows'</span>, 100)
+pd.set_option(<span class="st">'display.float_format'</span>, <span class="kw">lambda</span> x: <span class="st">'%.3f'</span> % x)
+sns.set_theme(style=<span class="st">"whitegrid"</span>)
+%matplotlib inline</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">1.8 Project folder structure</div>
+<div class="code-block"><div class="code-label">recommended layout</div><pre>my_project/
+├── data/
+│   ├── raw/          <span class="cm"># original files — never modify!</span>
+│   ├── processed/    <span class="cm"># cleaned data</span>
+│   └── output/       <span class="cm"># results, exports</span>
+├── notebooks/        <span class="cm"># your .ipynb files</span>
+├── reports/          <span class="cm"># charts, PDFs</span>
+└── README.md</pre></div>
+<div class="tip">Always keep the raw data untouched. Work on copies only. Rule: never overwrite raw data.</div>`
+},
+{tag:"Chapter 02 — Loading",title:"Data Loading",desc:"How to load data from different sources — CSV, Excel, JSON, databases, and web APIs.",
+content:`<div class="section-title">2.0 Source selection guide</div>
+<table class="ref">
+<tr><th>Source type</th><th>Use when</th><th>Why use it</th><th>Skip / caution</th></tr>
+<tr><td>CSV</td><td>Flat tabular data, easy sharing</td><td>Simple and universal format</td><td>Skip for very large repeated pipelines where Parquet is faster and smaller</td></tr>
+<tr><td>Excel</td><td>Business files with multiple sheets/manual inputs</td><td>Good for stakeholder-ready files</td><td>Skip as a primary storage for big automated jobs</td></tr>
+<tr><td>JSON/API</td><td>Nested web/app events</td><td>Captures rich hierarchical data</td><td>Skip direct analysis before flattening and validating schema drift</td></tr>
+<tr><td>SQL</td><td>Production-grade relational data</td><td>Filter at source and keep logic reproducible</td><td>Skip full table pulls when only a subset is needed</td></tr>
+<tr><td>Parquet</td><td>Large analytics pipelines</td><td>Columnar + compressed + fast read/write</td><td>Skip if your consumers only use Excel tools</td></tr>
+</table>
+<div class="tip">System to use for repeatable analysis: keep raw data in files or database tables, run cleaning/transforms in Python (pandas), and save processed outputs in Parquet plus a final CSV/Excel for sharing. This gives speed for you and compatibility for others.</div>
+<div class="section-title">2.1 Load CSV file</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Basic</span>
+df = pd.read_csv(<span class="st">'data/raw/file.csv'</span>)
+
+<span class="cm"># With options</span>
+df = pd.read_csv(
+    <span class="st">'data/raw/file.csv'</span>,
+    sep=<span class="st">','</span>,                        <span class="cm"># delimiter (use '\t' for TSV)</span>
+    encoding=<span class="st">'utf-8'</span>,               <span class="cm"># try 'latin-1' if errors occur</span>
+    parse_dates=[<span class="st">'date_column'</span>],     <span class="cm"># auto-parse date columns</span>
+    index_col=None,                   <span class="cm"># don't use any column as index</span>
+    na_values=[<span class="st">'N/A'</span>, <span class="st">'--'</span>, <span class="st">''</span>, <span class="st">'null'</span>],
+    nrows=1000                        <span class="cm"># load first 1000 rows only</span>
+)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">2.2 Load Excel</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Single sheet</span>
+df = pd.read_excel(<span class="st">'data/raw/file.xlsx'</span>, sheet_name=<span class="st">'Sheet1'</span>)
+
+<span class="cm"># All sheets into a dictionary</span>
+all_sheets = pd.read_excel(<span class="st">'file.xlsx'</span>, sheet_name=None)
+df = all_sheets[<span class="st">'Sales'</span>]      <span class="cm"># access specific sheet</span>
+<span class="fn">print</span>(all_sheets.keys())      <span class="cm"># see all sheet names</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">2.3 Load JSON / Web APIs</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># JSON file</span>
+df = pd.read_json(<span class="st">'data.json'</span>)
+
+<span class="cm"># From a REST API</span>
+<span class="kw">import</span> requests
+response = requests.get(<span class="st">'https://api.example.com/data'</span>)
+data = response.json()
+df = pd.DataFrame(data)           <span class="cm"># if data is a list of records</span>
+df = pd.DataFrame(data[<span class="st">'results'</span>])  <span class="cm"># if nested</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">2.4 Load from SQL database</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="kw">import</span> sqlite3
+
+<span class="cm"># SQLite (local file)</span>
+conn = sqlite3.connect(<span class="st">'database.db'</span>)
+df = pd.read_sql_query(<span class="st">"SELECT * FROM sales WHERE year = 2024"</span>, conn)
+conn.close()
+
+<span class="cm"># MySQL / PostgreSQL (via sqlalchemy)</span>
+<span class="kw">import</span> sqlalchemy
+engine = sqlalchemy.create_engine(<span class="st">'mysql+pymysql://user:pass@host/dbname'</span>)
+df = pd.read_sql(<span class="st">"SELECT * FROM orders LIMIT 10000"</span>, engine)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">2.5 Save your data</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># CSV (most universal)</span>
+df.to_csv(<span class="st">'data/processed/clean.csv'</span>, index=False)
+
+<span class="cm"># Excel</span>
+df.to_excel(<span class="st">'output.xlsx'</span>, sheet_name=<span class="st">'Results'</span>, index=False)
+
+<span class="cm"># Parquet (fast, compressed — best for large files)</span>
+df.to_parquet(<span class="st">'data/processed/clean.parquet'</span>, index=False)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>`
+},
+{tag:"Chapter 03 — EDA",title:"Exploratory Data Analysis",desc:"Understand the structure, shape, and content of your dataset before doing anything else. Never skip this step.",
+content:`<div class="section-title">3.0 EDA decision rules</div>
+<table class="ref">
+<tr><th>Check</th><th>When to prioritize</th><th>Why it matters</th><th>Can skip?</th></tr>
+<tr><td>Shape + dtypes</td><td>Always, first 1-2 minutes</td><td>Defines what operations are valid</td><td>Never skip</td></tr>
+<tr><td>Missingness map</td><td>Any real-world dataset</td><td>Drives cleaning strategy</td><td>Skip only if you confirmed zero nulls</td></tr>
+<tr><td>Duplicate checks</td><td>Logs, transactions, joins</td><td>Avoids double counting bias</td><td>Skip only for guaranteed unique IDs</td></tr>
+<tr><td>Distribution review</td><td>Before outlier handling/statistics</td><td>Decides mean vs median and test choice</td><td>Do not skip for numeric analysis</td></tr>
+<tr><td>Category balance</td><td>Classification or segmentation tasks</td><td>Detects class imbalance and rare groups</td><td>Skip for pure regression without categories</td></tr>
+</table>
+<div class="note">If time is short, never skip: shape, dtype, null rate, duplicates, and one distribution check per key numeric column. That minimum prevents most analysis mistakes.</div>
+<div class="section-title">3.1 First look — always run these first</div>
+<div class="code-block"><div class="code-label">python</div><pre>df.shape            <span class="cm"># (rows, columns)</span>
+df.head(10)         <span class="cm"># first 10 rows</span>
+df.tail(5)          <span class="cm"># last 5 rows</span>
+df.sample(5)        <span class="cm"># random sample</span>
+df.columns.tolist() <span class="cm"># column names as list</span>
+df.dtypes           <span class="cm"># data type of each column</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">3.2 Data types and memory usage</div>
+<div class="code-block"><div class="code-label">python</div><pre>df.info()
+<span class="cm"># Shows: column names, non-null count, dtype, memory usage</span>
+
+memory_mb = df.memory_usage(deep=True).sum() / 1024**2
+<span class="fn">print</span>(<span class="st">f"Memory: {memory_mb:.1f} MB"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">3.3 Summary statistics</div>
+<div class="code-block"><div class="code-label">python</div><pre>df.describe()                     <span class="cm"># numeric columns only</span>
+df.describe(include=<span class="st">'all'</span>)       <span class="cm"># all columns including text</span>
+df.describe(percentiles=[.05, .25, .5, .75, .95])  <span class="cm"># custom percentiles</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">3.4 Missing values — full overview</div>
+<div class="code-block"><div class="code-label">python</div><pre>missing = pd.DataFrame({
+    <span class="st">'count'</span>: df.isnull().sum(),
+    <span class="st">'percent'</span>: (df.isnull().sum() / len(df) * 100).round(2)
+})
+missing[missing[<span class="st">'count'</span>] > 0].sort_values(<span class="st">'percent'</span>, ascending=False)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">3.5 Unique values and duplicates</div>
+<div class="code-block"><div class="code-label">python</div><pre>df.nunique()                          <span class="cm"># unique value count per column</span>
+df[<span class="st">'category'</span>].value_counts()         <span class="cm"># top values with count</span>
+df[<span class="st">'category'</span>].value_counts(normalize=True)  <span class="cm"># as percentages</span>
+
+df.duplicated().sum()                 <span class="cm"># how many duplicate rows</span>
+df[df.duplicated()]                   <span class="cm"># show duplicate rows</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="note">Write down your observations! Note columns with issues, unexpected types, or high missing rates before proceeding.</div>`
+},
+{tag:"Chapter 04 — Cleaning",title:"Data Cleaning",desc:"Handle missing values, duplicates, outliers, incorrect types, and messy strings. This is often 60–70% of the work.",
+content:`<div class="warn">Always backup first: <code>df_raw = df.copy()</code> — run this before any cleaning!</div>
+<div class="section-title">4.0 Cleaning decision guide</div>
+<table class="ref">
+<tr><th>Cleaning method</th><th>Use when</th><th>Why use it</th><th>Skip when</th></tr>
+<tr><td>Drop rows</td><td>Only a small number of rows are missing or invalid</td><td>Fast and simple when data loss is tiny</td><td>Skip when missingness is large, random, or concentrated in important columns</td></tr>
+<tr><td>Fill with mean</td><td>Numeric data is roughly symmetric and outliers are not severe</td><td>Keeps the overall average stable</td><td>Skip for skewed numeric columns like income, prices, or counts with strong outliers</td></tr>
+<tr><td>Fill with median</td><td>Numeric data is skewed or has outliers</td><td>More robust than mean for messy real-world values</td><td>Skip only when exact average behavior is required</td></tr>
+<tr><td>Fill with mode / "Unknown"</td><td>Categorical data has missing values</td><td>Preserves the category structure</td><td>Skip when missingness itself is meaningful and should be analyzed separately</td></tr>
+<tr><td>Forward fill / backward fill</td><td>Time series or ordered records</td><td>Uses nearby values where continuity is expected</td><td>Skip for unrelated rows, shuffled data, or data without a natural order</td></tr>
+<tr><td>Drop duplicates</td><td>Duplicate rows are accidental copies</td><td>Prevents double counting</td><td>Skip when repeated rows are valid events, transactions, or measurements</td></tr>
+<tr><td>IQR clipping</td><td>You want to reduce the impact of extreme numeric outliers</td><td>Protects analysis from extreme values without removing rows</td><td>Skip when extreme values are real business events that must stay visible</td></tr>
+<tr><td>Z-score filtering</td><td>Data is close to normal and you need a statistical outlier rule</td><td>Good for controlled numeric data</td><td>Skip for strongly skewed data or small samples where Z-scores are unstable</td></tr>
+<tr><td>String standardization</td><td>Text values have spaces, case differences, or symbols</td><td>Makes categories consistent</td><td>Skip only if the original text format must be preserved exactly</td></tr>
+</table>
+<div class="section-title">4.1 Handle missing values</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Drop rows where ALL values are missing</span>
+df.dropna(how=<span class="st">'all'</span>, inplace=True)
+
+<span class="cm"># Drop rows if KEY columns are missing</span>
+df.dropna(subset=[<span class="st">'id'</span>, <span class="st">'date'</span>], inplace=True)
+
+<span class="cm"># Fill with a constant value</span>
+df[<span class="st">'col'</span>].fillna(0, inplace=True)
+df[<span class="st">'category'</span>].fillna(<span class="st">'Unknown'</span>, inplace=True)
+
+<span class="cm"># Fill numeric with mean or median</span>
+df[<span class="st">'age'</span>].fillna(df[<span class="st">'age'</span>].mean(), inplace=True)
+df[<span class="st">'salary'</span>].fillna(df[<span class="st">'salary'</span>].median(), inplace=True)
+
+<span class="cm"># Fill by group mean (smarter)</span>
+df[<span class="st">'salary'</span>] = df.groupby(<span class="st">'department'</span>)[<span class="st">'salary'</span>].transform(
+    <span class="kw">lambda</span> x: x.fillna(x.mean())
+)
+
+<span class="cm"># Forward fill / backward fill (for time series)</span>
+df[<span class="st">'price'</span>].fillna(method=<span class="st">'ffill'</span>, inplace=True)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">4.2 Fix data types</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Convert to numeric (coerce turns errors to NaN)</span>
+df[<span class="st">'price'</span>] = pd.to_numeric(df[<span class="st">'price'</span>], errors=<span class="st">'coerce'</span>)
+
+<span class="cm"># Convert to datetime</span>
+df[<span class="st">'date'</span>] = pd.to_datetime(df[<span class="st">'date'</span>], format=<span class="st">'%Y-%m-%d'</span>)
+
+<span class="cm"># Convert to category (saves memory)</span>
+df[<span class="st">'status'</span>] = df[<span class="st">'status'</span>].astype(<span class="st">'category'</span>)
+
+<span class="cm"># Convert to integer</span>
+df[<span class="st">'count'</span>] = df[<span class="st">'count'</span>].astype(<span class="st">'int64'</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">4.3 Clean string / text columns</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Strip whitespace and lowercase</span>
+df[<span class="st">'name'</span>] = df[<span class="st">'name'</span>].str.strip().str.lower()
+
+<span class="cm"># Remove currency symbols and commas</span>
+df[<span class="st">'price'</span>] = df[<span class="st">'price'</span>].str.replace(<span class="st">'$'</span>, <span class="st">''</span>).str.replace(<span class="st">','</span>, <span class="st">''</span>)
+
+<span class="cm"># Remove non-numeric characters</span>
+df[<span class="st">'phone'</span>] = df[<span class="st">'phone'</span>].str.replace(r<span class="st">'[^0-9]'</span>, <span class="st">''</span>, regex=True)
+
+<span class="cm"># Standardize inconsistent values</span>
+df[<span class="st">'gender'</span>] = df[<span class="st">'gender'</span>].replace({
+    <span class="st">'m'</span>: <span class="st">'Male'</span>, <span class="st">'M'</span>: <span class="st">'Male'</span>, <span class="st">'male'</span>: <span class="st">'Male'</span>,
+    <span class="st">'f'</span>: <span class="st">'Female'</span>, <span class="st">'F'</span>: <span class="st">'Female'</span>, <span class="st">'female'</span>: <span class="st">'Female'</span>
+})</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">4.4 Remove duplicates</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Remove exact duplicates</span>
+df.drop_duplicates(inplace=True)
+
+<span class="cm"># Remove duplicates based on key column (keep latest)</span>
+df.drop_duplicates(subset=[<span class="st">'customer_id'</span>], keep=<span class="st">'last'</span>, inplace=True)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">4.5 Handle outliers</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># IQR method (recommended)</span>
+Q1 = df[<span class="st">'salary'</span>].quantile(0.25)
+Q3 = df[<span class="st">'salary'</span>].quantile(0.75)
+IQR = Q3 - Q1
+lower = Q1 - 1.5 * IQR
+upper = Q3 + 1.5 * IQR
+
+<span class="cm"># Option A: Remove outlier rows</span>
+df_clean = df[(df[<span class="st">'salary'</span>] >= lower) & (df[<span class="st">'salary'</span>] <= upper)]
+
+<span class="cm"># Option B: Cap/clip outliers (safer)</span>
+df[<span class="st">'salary'</span>] = df[<span class="st">'salary'</span>].clip(lower, upper)
+
+<span class="cm"># Z-score method</span>
+from scipy import stats
+z_scores = np.abs(stats.zscore(df[<span class="st">'salary'</span>].dropna()))
+df_clean = df[z_scores < 3]</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>`
+},
+{tag:"Chapter 05 — Transform",title:"Data Transformation",desc:"Reshape, aggregate, merge, and manipulate your data into the form needed for analysis.",
+content:`<div class="section-title">5.0 Transformation strategy (when / why / skip)</div>
+<table class="ref">
+<tr><th>Method</th><th>Use when</th><th>Why use it</th><th>Skip when</th></tr>
+<tr><td>Filter rows</td><td>You need scope-specific analysis</td><td>Removes irrelevant records early</td><td>Skip permanent filtering until you save a full backup slice</td></tr>
+<tr><td>GroupBy aggregation</td><td>You need KPIs by segment</td><td>Converts row-level noise into decision-level metrics</td><td>Skip when event-level timing is critical</td></tr>
+<tr><td>Pivot table</td><td>Matrix-style summaries for reporting</td><td>Fast comparison across two dimensions</td><td>Skip for high-cardinality columns with huge sparse matrices</td></tr>
+<tr><td>Merge / join</td><td>Metrics are split across sources</td><td>Builds a complete analytical view</td><td>Skip before checking key uniqueness and join cardinality</td></tr>
+<tr><td>Custom apply/map</td><td>Business logic is not built-in</td><td>Encodes domain rules explicitly</td><td>Skip row-wise apply on very large data when vectorized options exist</td></tr>
+</table>
+<div class="warn">Before any merge, check one-to-one vs one-to-many key behavior. Wrong join cardinality can silently duplicate rows and break all downstream metrics.</div>
+<div class="section-title">5.1 Select and filter</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Select specific columns</span>
+df[[<span class="st">'name'</span>, <span class="st">'age'</span>, <span class="st">'salary'</span>]]
+
+<span class="cm"># Filter rows by condition</span>
+df[df[<span class="st">'age'</span>] > 30]
+df[(df[<span class="st">'age'</span>] > 30) & (df[<span class="st">'salary'</span>] > 50000)]
+df[df[<span class="st">'city'</span>].isin([<span class="st">'Dhaka'</span>, <span class="st">'Chittagong'</span>])]
+df[~df[<span class="st">'status'</span>].isin([<span class="st">'Inactive'</span>])]   <span class="cm"># NOT in list</span>
+
+<span class="cm"># Query syntax (cleaner for complex filters)</span>
+df.query(<span class="st">'age > 30 and salary > 50000 and city == "Dhaka"'</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">5.2 Sort and rank</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Sort by one column</span>
+df.sort_values(<span class="st">'salary'</span>, ascending=False)
+
+<span class="cm"># Sort by multiple columns</span>
+df.sort_values([<span class="st">'department'</span>, <span class="st">'salary'</span>], ascending=[True, False])
+
+<span class="cm"># Add rank column</span>
+df[<span class="st">'rank'</span>] = df[<span class="st">'salary'</span>].rank(ascending=False).astype(<span class="st">'int'</span>)
+df[<span class="st">'pct_rank'</span>] = df[<span class="st">'salary'</span>].rank(pct=True)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">5.3 Group and aggregate</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Simple groupby</span>
+df.groupby(<span class="st">'department'</span>)[<span class="st">'salary'</span>].mean()
+
+<span class="cm"># Multiple aggregations (named)</span>
+summary = df.groupby(<span class="st">'department'</span>).agg(
+    avg_salary=(<span class="st">'salary'</span>, <span class="st">'mean'</span>),
+    max_salary=(<span class="st">'salary'</span>, <span class="st">'max'</span>),
+    min_salary=(<span class="st">'salary'</span>, <span class="st">'min'</span>),
+    headcount=(<span class="st">'id'</span>, <span class="st">'count'</span>)
+).reset_index()
+
+<span class="cm"># Pivot table</span>
+pivot = df.pivot_table(
+    values=<span class="st">'sales'</span>,
+    index=<span class="st">'region'</span>,
+    columns=<span class="st">'product'</span>,
+    aggfunc=<span class="st">'sum'</span>,
+    fill_value=0
+)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">5.4 Merge and join datasets</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Inner join (only matching rows in both)</span>
+merged = pd.merge(df1, df2, on=<span class="st">'customer_id'</span>, how=<span class="st">'inner'</span>)
+
+<span class="cm"># Left join (keep all rows from df1)</span>
+merged = pd.merge(df1, df2, on=<span class="st">'id'</span>, how=<span class="st">'left'</span>)
+
+<span class="cm"># Join on different column names</span>
+merged = pd.merge(df1, df2, left_on=<span class="st">'cust_id'</span>, right_on=<span class="st">'id'</span>)
+
+<span class="cm"># Stack rows (same columns)</span>
+combined = pd.concat([df_2023, df_2024], ignore_index=True)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">5.5 Apply custom transformations</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Apply to a column</span>
+df[<span class="st">'name_upper'</span>] = df[<span class="st">'name'</span>].apply(<span class="kw">lambda</span> x: x.upper() if pd.notna(x) else x)
+
+<span class="cm"># Apply across columns (axis=1)</span>
+df[<span class="st">'full_name'</span>] = df.apply(<span class="kw">lambda</span> row: row[<span class="st">'first'</span>] + <span class="st">' '</span> + row[<span class="st">'last'</span>], axis=1)
+
+<span class="cm"># Map values</span>
+status_map = {1: <span class="st">'Active'</span>, 0: <span class="st">'Inactive'</span>}
+df[<span class="st">'status_label'</span>] = df[<span class="st">'status'</span>].map(status_map)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>`
+},
+{tag:"Chapter 06 — Features",title:"Feature Engineering",desc:"Create new meaningful columns from existing data to improve your analysis and model performance.",
+content:`<div class="section-title">6.0 Feature design rules</div>
+<table class="ref">
+<tr><th>Feature type</th><th>Use when</th><th>Why use it</th><th>Skip when</th></tr>
+<tr><td>Date parts</td><td>Seasonality/week patterns matter</td><td>Captures time behavior for trends and demand</td><td>Skip if timestamp has no relation to target</td></tr>
+<tr><td>Binning</td><td>Need interpretable tiers</td><td>Makes insights easier for business users</td><td>Skip excessive binning that removes predictive detail</td></tr>
+<tr><td>One-hot encoding</td><td>Nominal categories</td><td>Prepares non-ordered labels for ML</td><td>Skip for very high-cardinality columns unless reduced first</td></tr>
+<tr><td>Label/ordinal encoding</td><td>True ordered categories</td><td>Preserves rank meaning</td><td>Skip for unordered categories (creates fake order)</td></tr>
+<tr><td>Scaling/log transforms</td><td>Distance-based models or skewed features</td><td>Improves model stability and convergence</td><td>Skip scaling for tree-based models unless pipeline consistency is required</td></tr>
+</table>
+<div class="tip">Keep a feature log: feature name, formula, why it helps, and leakage risk. If a feature uses future information, do not use it for prediction.</div>
+<div class="section-title">6.1 Date and time features</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Make sure date column is datetime first</span>
+df[<span class="st">'date'</span>] = pd.to_datetime(df[<span class="st">'date'</span>])
+
+<span class="cm"># Extract date parts</span>
+df[<span class="st">'year'</span>]     = df[<span class="st">'date'</span>].dt.year
+df[<span class="st">'month'</span>]    = df[<span class="st">'date'</span>].dt.month
+df[<span class="st">'day'</span>]      = df[<span class="st">'date'</span>].dt.day
+df[<span class="st">'weekday'</span>]  = df[<span class="st">'date'</span>].dt.day_name()
+df[<span class="st">'quarter'</span>]  = df[<span class="st">'date'</span>].dt.quarter
+df[<span class="st">'week_num'</span>] = df[<span class="st">'date'</span>].dt.isocalendar().week
+
+<span class="cm"># Business logic features</span>
+df[<span class="st">'is_weekend'</span>]  = df[<span class="st">'date'</span>].dt.dayofweek >= 5
+df[<span class="st">'is_month_end'</span>] = df[<span class="st">'date'</span>].dt.is_month_end
+df[<span class="st">'days_since'</span>]   = (pd.Timestamp.today() - df[<span class="st">'date'</span>]).dt.days</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">6.2 Binning / bucketing continuous values</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Equal-width bins</span>
+df[<span class="st">'age_group'</span>] = pd.cut(df[<span class="st">'age'</span>],
+    bins=[0, 18, 35, 60, 100],
+    labels=[<span class="st">'Minor'</span>, <span class="st">'Young Adult'</span>, <span class="st">'Middle Age'</span>, <span class="st">'Senior'</span>]
+)
+
+<span class="cm"># Equal-frequency bins (quartiles)</span>
+df[<span class="st">'salary_tier'</span>] = pd.qcut(df[<span class="st">'salary'</span>], q=4,
+    labels=[<span class="st">'Low'</span>, <span class="st">'Mid'</span>, <span class="st">'High'</span>, <span class="st">'Top'</span>]
+)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">6.3 Encode categorical variables</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Label encoding (use for ordinal/ordered categories)</span>
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+df[<span class="st">'gender_enc'</span>] = le.fit_transform(df[<span class="st">'gender'</span>].fillna(<span class="st">'Unknown'</span>))
+
+<span class="cm"># One-hot encoding (use for nominal/unordered categories)</span>
+df = pd.get_dummies(df, columns=[<span class="st">'city'</span>, <span class="st">'product_type'</span>], drop_first=True)
+
+<span class="cm"># Manual ordinal mapping</span>
+size_order = {<span class="st">'Small'</span>: 1, <span class="st">'Medium'</span>: 2, <span class="st">'Large'</span>: 3, <span class="st">'XL'</span>: 4}
+df[<span class="st">'size_num'</span>] = df[<span class="st">'size'</span>].map(size_order)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">6.4 Scaling numeric features</div>
+<div class="code-block"><div class="code-label">python</div><pre>from sklearn.preprocessing import StandardScaler, MinMaxScaler
+
+cols_to_scale = [<span class="st">'age'</span>, <span class="st">'salary'</span>, <span class="st">'experience'</span>]
+
+<span class="cm"># Standardize (mean=0, std=1) — use for ML models</span>
+scaler = StandardScaler()
+df[cols_to_scale] = scaler.fit_transform(df[cols_to_scale])
+
+<span class="cm"># Normalize to 0-1 range</span>
+minmax = MinMaxScaler()
+df[cols_to_scale] = minmax.fit_transform(df[cols_to_scale])
+
+<span class="cm"># Log transform (for heavily skewed data like income, prices)</span>
+df[<span class="st">'salary_log'</span>] = np.log1p(df[<span class="st">'salary'</span>])  <span class="cm"># log1p handles zeros</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="tip">Feature engineering is where domain knowledge matters most. Think about what combinations or transformations would be meaningful for your specific problem.</div>`
+},
+{tag:"Chapter 07 — Statistics",title:"Statistical Analysis",desc:"Use descriptive and inferential statistics to understand distributions, relationships, and test hypotheses.",
+content:`<div class="section-title">7.0 Test selection matrix</div>
+<table class="ref">
+<tr><th>Question type</th><th>Recommended method</th><th>Why</th><th>Skip / alternative</th></tr>
+<tr><td>Compare two numeric group means</td><td>T-test</td><td>Directly tests mean difference</td><td>If non-normal + small sample, use Mann-Whitney U</td></tr>
+<tr><td>Compare 3+ numeric groups</td><td>ANOVA</td><td>Controls error better than many t-tests</td><td>If assumptions fail, use Kruskal-Wallis</td></tr>
+<tr><td>Association of two categorical vars</td><td>Chi-square</td><td>Tests independence in contingency table</td><td>If expected counts are tiny, use Fisher exact (2x2)</td></tr>
+<tr><td>Linear numeric relationship</td><td>Pearson correlation</td><td>Measures linear association strength</td><td>Use Spearman for monotonic non-linear / ranked data</td></tr>
+<tr><td>Pre/post on same subjects</td><td>Paired t-test</td><td>Accounts for within-subject pairing</td><td>Use Wilcoxon signed-rank if non-normal</td></tr>
+</table>
+<div class="warn">Always check assumptions before claiming significance: independence, sample size, outliers, and distribution shape. Statistical significance is not business impact.</div>
+<div class="section-title">7.1 Descriptive statistics</div>
+<div class="note"><strong>Use descriptive statistics to understand the shape of the data before making conclusions.</strong> Mean and standard deviation are good for balanced numeric data. Median and percentiles are better when data is skewed. Mode is the best choice for categories or repeated values. If you are not sure which one to use, check the distribution first and decide based on whether the data has outliers.</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Central tendency</span>
+df[<span class="st">'salary'</span>].mean()
+df[<span class="st">'salary'</span>].median()
+df[<span class="st">'salary'</span>].mode()[0]
+
+<span class="cm"># Spread / dispersion</span>
+df[<span class="st">'salary'</span>].std()
+df[<span class="st">'salary'</span>].var()
+df[<span class="st">'salary'</span>].quantile([.10, .25, .5, .75, .90])
+df[<span class="st">'salary'</span>].max() - df[<span class="st">'salary'</span>].min()   <span class="cm"># range</span>
+
+<span class="cm"># Shape of distribution</span>
+df[<span class="st">'salary'</span>].skew()     <span class="cm"># >0 right-skewed, <0 left-skewed</span>
+df[<span class="st">'salary'</span>].kurtosis() <span class="cm"># >3 = heavy tails</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">7.2 Correlation analysis</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Pearson correlation matrix (linear relationships)</span>
+corr = df.select_dtypes(include=<span class="st">'number'</span>).corr()
+
+<span class="cm"># Visualize as heatmap</span>
+plt.figure(figsize=(10, 8))
+mask = np.triu(np.ones_like(corr, dtype=bool))  <span class="cm"># hide upper triangle</span>
+sns.heatmap(corr, annot=True, fmt=<span class="st">'.2f'</span>, cmap=<span class="st">'coolwarm'</span>,
+            center=0, mask=mask, square=True)
+plt.title(<span class="st">'Correlation Matrix'</span>)
+plt.tight_layout(); plt.show()
+
+<span class="cm"># Correlation with target variable only</span>
+corr[<span class="st">'target_col'</span>].sort_values(ascending=False)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">7.3 Hypothesis testing</div>
+<div class="note"><strong>Use tests when you need to compare groups or check whether a pattern is statistically reliable.</strong> T-tests compare two groups, ANOVA compares three or more groups, and chi-square tests are for categorical relationships. Do not use these tests just because they exist. Use them only when the question is about a difference, relationship, or association that you want to verify.</div>
+<div class="code-block"><div class="code-label">python</div><pre>from scipy import stats
+
+<span class="cm"># T-test: compare means of two groups</span>
+group_a = df[df[<span class="st">'group'</span>] == <span class="st">'A'</span>][<span class="st">'score'</span>]
+group_b = df[df[<span class="st">'group'</span>] == <span class="st">'B'</span>][<span class="st">'score'</span>]
+t_stat, p_val = stats.ttest_ind(group_a, group_b)
+<span class="fn">print</span>(<span class="st">f"t={t_stat:.3f}, p={p_val:.4f}"</span>)
+<span class="fn">print</span>(<span class="st">"Significant!"</span> if p_val < 0.05 else <span class="st">"Not significant"</span>)
+
+<span class="cm"># Chi-square test: categorical association</span>
+ct = pd.crosstab(df[<span class="st">'gender'</span>], df[<span class="st">'purchased'</span>])
+chi2, p, dof, expected = stats.chi2_contingency(ct)
+<span class="fn">print</span>(<span class="st">f"Chi2={chi2:.3f}, p={p:.4f}, dof={dof}"</span>)
+
+<span class="cm"># Normality test</span>
+stat, p = stats.normaltest(df[<span class="st">'salary'</span>].dropna())
+<span class="fn">print</span>(<span class="st">"Normal distribution?"</span>, <span class="st">"Yes"</span> if p > 0.05 else <span class="st">"No"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="note">p-value &lt; 0.05 = statistically significant at 95% confidence. p-value &lt; 0.01 = 99% confidence.</div>
+<div class="section-title">7.4 ANOVA — compare 3+ groups</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># One-way ANOVA</span>
+groups = [df[df[<span class="st">'dept'</span>] == d][<span class="st">'salary'</span>] for d in df[<span class="st">'dept'</span>].unique()]
+f_stat, p_val = stats.f_oneway(*groups)
+<span class="fn">print</span>(<span class="st">f"F={f_stat:.3f}, p={p_val:.4f}"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>`
+},
+{tag:"Chapter 08 — Visualization",title:"Data Visualization",desc:"Create clear and insightful charts. Choose the right chart for the right question.",
+content:`<div class="section-title">8.0 Visualization decision guide</div>
+<table class="ref">
+<tr><th>Goal</th><th>Best chart</th><th>Why</th><th>Avoid / skip</th></tr>
+<tr><td>Show one numeric distribution</td><td>Histogram + KDE</td><td>Reveals skew, modes, tails</td><td>Skip pie chart for numeric distributions</td></tr>
+<tr><td>Compare groups on numeric value</td><td>Boxplot/violin + strip</td><td>Shows median + spread + outliers</td><td>Skip only bar mean without spread info</td></tr>
+<tr><td>Compare category totals</td><td>Bar chart</td><td>Best for discrete comparisons</td><td>Avoid stacked bars with too many segments</td></tr>
+<tr><td>Show trend over time</td><td>Line chart</td><td>Natural for temporal continuity</td><td>Skip if x-axis is unordered categories</td></tr>
+<tr><td>Explore two numeric vars</td><td>Scatter/regplot</td><td>Shows pattern, clusters, outliers</td><td>Skip with heavy overplotting without alpha/binning</td></tr>
+</table>
+<div class="note">Before publishing a chart: label units, start bars at zero, limit colors, and add one sentence interpretation. A chart without context is easy to misread.</div>
+<div class="section-title">8.1 Distribution charts</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Histogram with density curve</span>
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+sns.histplot(df[<span class="st">'salary'</span>], bins=30, kde=True, ax=axes[0])
+axes[0].set_title(<span class="st">'Salary Distribution'</span>)
+
+<span class="cm"># Boxplot — shows median, IQR, and outliers</span>
+sns.boxplot(x=<span class="st">'department'</span>, y=<span class="st">'salary'</span>, data=df, ax=axes[1])
+axes[1].tick_params(axis=<span class="st">'x'</span>, rotation=45)
+plt.tight_layout(); plt.show()</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">8.2 Relationship charts</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Scatter plot with color grouping</span>
+sns.scatterplot(x=<span class="st">'age'</span>, y=<span class="st">'salary'</span>, hue=<span class="st">'department'</span>, data=df, alpha=0.7)
+plt.title(<span class="st">'Age vs Salary by Department'</span>); plt.show()
+
+<span class="cm"># Regression line</span>
+sns.regplot(x=<span class="st">'age'</span>, y=<span class="st">'salary'</span>, data=df, scatter_kws={<span class="st">'alpha'</span>:0.5})
+
+<span class="cm"># Pairplot — all numeric columns vs each other</span>
+cols = [<span class="st">'age'</span>, <span class="st">'salary'</span>, <span class="st">'experience'</span>, <span class="st">'score'</span>]
+sns.pairplot(df[cols + [<span class="st">'category'</span>]], hue=<span class="st">'category'</span>, diag_kind=<span class="st">'kde'</span>)
+plt.show()</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">8.3 Categorical charts</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Horizontal bar chart (good for many categories)</span>
+df[<span class="st">'department'</span>].value_counts().sort_values().plot(
+    kind=<span class="st">'barh'</span>, figsize=(8, 5), color=<span class="st">'#4a90d9'</span>
+)
+plt.title(<span class="st">'Employees per Department'</span>); plt.tight_layout(); plt.show()
+
+<span class="cm"># Grouped bar chart</span>
+df.groupby([<span class="st">'year'</span>, <span class="st">'product'</span>])[<span class="st">'sales'</span>].sum().unstack().plot(
+    kind=<span class="st">'bar'</span>, figsize=(10, 5), edgecolor=<span class="st">'white'</span>
+)
+plt.xticks(rotation=0); plt.legend(title=<span class="st">'Product'</span>); plt.show()</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">8.4 Time series charts</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Basic line chart</span>
+df_ts = df.set_index(<span class="st">'date'</span>).sort_index()
+df_ts[<span class="st">'sales'</span>].plot(figsize=(12, 4), color=<span class="st">'#2196F3'</span>, linewidth=1.5)
+plt.title(<span class="st">'Sales Over Time'</span>); plt.ylabel(<span class="st">'Sales'</span>); plt.grid(alpha=0.3)
+plt.tight_layout(); plt.show()
+
+<span class="cm"># With rolling average</span>
+df_ts[<span class="st">'rolling_7d'</span>] = df_ts[<span class="st">'sales'</span>].rolling(window=7).mean()
+df_ts[[<span class="st">'sales'</span>, <span class="st">'rolling_7d'</span>]].plot(figsize=(12, 4))</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">8.5 Interactive charts with Plotly</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Interactive scatter</span>
+fig = px.scatter(df, x=<span class="st">'age'</span>, y=<span class="st">'salary'</span>, color=<span class="st">'department'</span>,
+                 size=<span class="st">'experience'</span>, hover_name=<span class="st">'name'</span>,
+                 title=<span class="st">'Salary by Age and Department'</span>)
+fig.show()
+
+<span class="cm"># Interactive bar</span>
+fig = px.bar(df, x=<span class="st">'month'</span>, y=<span class="st">'revenue'</span>, color=<span class="st">'product'</span>,
+             barmode=<span class="st">'group'</span>, title=<span class="st">'Monthly Revenue by Product'</span>)
+fig.show()
+
+<span class="cm"># Interactive line (time series)</span>
+fig = px.line(df, x=<span class="st">'date'</span>, y=<span class="st">'sales'</span>, color=<span class="st">'region'</span>)
+fig.show()</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<table class="ref">
+<tr><th>Chart type</th><th>Use when...</th></tr>
+<tr><td>Histogram</td><td>Show distribution of one numeric column</td></tr>
+<tr><td>Boxplot</td><td>Compare distributions across groups, spot outliers</td></tr>
+<tr><td>Bar chart</td><td>Compare counts or totals across categories</td></tr>
+<tr><td>Scatter plot</td><td>Show relationship between two numeric columns</td></tr>
+<tr><td>Line chart</td><td>Show change over time</td></tr>
+<tr><td>Heatmap</td><td>Show correlations or 2D frequency tables</td></tr>
+<tr><td>Pie chart</td><td>Show proportions (max 5-6 slices)</td></tr>
+</table>`
+},
+{tag:"Chapter 09 — ML Basics",title:"Machine Learning Basics",desc:"Build, train, and evaluate predictive models. Learn the workflow that applies to every ML project.",
+content:`<div class="section-title">9.0 Model choice framework</div>
+<table class="ref">
+<tr><th>Situation</th><th>Start with</th><th>Why</th><th>Skip / caution</th></tr>
+<tr><td>Binary classification baseline</td><td>Logistic Regression</td><td>Fast, interpretable baseline</td><td>Skip as final model if strong non-linearity exists</td></tr>
+<tr><td>Mixed tabular features</td><td>Random Forest / Gradient Boosting</td><td>Handles interactions with little tuning</td><td>Skip if dataset is tiny and interpretability is strict</td></tr>
+<tr><td>Continuous target</td><td>Linear Regression baseline + tree regressor</td><td>Compare simple vs non-linear</td><td>Skip single-model conclusions without baseline comparison</td></tr>
+<tr><td>Imbalanced classes</td><td>Class weights + stratified split</td><td>Prevents majority-class bias</td><td>Do not rely on accuracy alone</td></tr>
+<tr><td>Very small data</td><td>Cross-validation + simple model</td><td>Reduces overfitting risk</td><td>Skip complex high-variance models</td></tr>
+</table>
+<div class="warn">Never tune hyperparameters on the test set. Keep test data untouched until final evaluation, or your reported performance will be optimistic.</div>
+<div class="section-title">9.1 Prepare data for ML</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># 1. Define features (X) and target (y)</span>
+X = df.drop(columns=[<span class="st">'target'</span>, <span class="st">'id'</span>, <span class="st">'date'</span>])
+y = df[<span class="st">'target'</span>]
+
+<span class="cm"># 2. Keep only numeric columns</span>
+X = X.select_dtypes(include=<span class="st">'number'</span>)
+
+<span class="cm"># 3. Remove rows with any missing values</span>
+mask = X.notna().all(axis=1) & y.notna()
+X, y = X[mask], y[mask]
+
+<span class="cm"># 4. Split into train and test sets</span>
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,       <span class="cm"># 20% for testing</span>
+    random_state=42,     <span class="cm"># for reproducibility</span>
+    stratify=y           <span class="cm"># keep class balance (classification only)</span>
+)
+
+<span class="fn">print</span>(<span class="st">f"Train: {X_train.shape}, Test: {X_test.shape}"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">9.2 Classification — predict categories</div>
+<div class="code-block"><div class="code-label">python</div><pre>from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+
+<span class="cm"># Choose and train a model</span>
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)
+model.fit(X_train, y_train)
+
+<span class="cm"># Predict</span>
+y_pred = model.predict(X_test)
+y_prob = model.predict_proba(X_test)[:, 1]   <span class="cm"># probability score</span>
+
+<span class="fn">print</span>(<span class="st">f"Accuracy: {accuracy_score(y_test, y_pred):.3f}"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">9.3 Regression — predict numbers</div>
+<div class="code-block"><div class="code-label">python</div><pre>from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">9.4 Cross-validation (more reliable)</div>
+<div class="code-block"><div class="code-label">python</div><pre>from sklearn.model_selection import cross_val_score
+
+<span class="cm"># 5-fold cross-validation</span>
+scores = cross_val_score(model, X, y, cv=5, scoring=<span class="st">'accuracy'</span>)
+<span class="fn">print</span>(<span class="st">f"CV Scores: {scores}"</span>)
+<span class="fn">print</span>(<span class="st">f"Mean: {scores.mean():.3f} ± {scores.std():.3f}"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">9.5 Hyperparameter tuning</div>
+<div class="code-block"><div class="code-label">python</div><pre>from sklearn.model_selection import GridSearchCV
+
+param_grid = {
+    <span class="st">'n_estimators'</span>: [50, 100, 200],
+    <span class="st">'max_depth'</span>: [3, 5, 10, None]
+}
+grid_search = GridSearchCV(RandomForestClassifier(), param_grid, cv=5, scoring=<span class="st">'accuracy'</span>)
+grid_search.fit(X_train, y_train)
+
+<span class="fn">print</span>(<span class="st">"Best params:"</span>, grid_search.best_params_)
+best_model = grid_search.best_estimator_</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>`
+},
+{tag:"Chapter 10 — Evaluation",title:"Model Evaluation",desc:"Measure model performance correctly. The right metric depends on your problem type.",
+content:`<div class="section-title">10.0 Metric selection guide</div>
+<table class="ref">
+<tr><th>Business objective</th><th>Primary metric</th><th>Why</th><th>What to avoid</th></tr>
+<tr><td>General balanced classification</td><td>Accuracy + F1</td><td>Balanced view of correctness and class performance</td><td>Avoid only accuracy if class imbalance exists</td></tr>
+<tr><td>Missed positive is expensive (fraud, disease)</td><td>Recall</td><td>Minimizes false negatives</td><td>Do not optimize precision alone</td></tr>
+<tr><td>False positive is expensive</td><td>Precision</td><td>Reduces false alarms</td><td>Do not optimize recall alone</td></tr>
+<tr><td>Ranking quality by score</td><td>ROC-AUC / PR-AUC</td><td>Evaluates probability ordering</td><td>Avoid hard-threshold metrics only</td></tr>
+<tr><td>Regression forecast error cost</td><td>MAE / RMSE / MAPE</td><td>MAE robust, RMSE penalizes large misses, MAPE interpretable</td><td>Skip MAPE when true values can be zero</td></tr>
+</table>
+<div class="tip">Report at least one threshold-free metric (AUC) and one threshold-based metric (Precision/Recall/F1) for classification. For regression, report both MAE and RMSE.</div>
+<div class="section-title">10.1 Classification metrics</div>
+<div class="code-block"><div class="code-label">python</div><pre>from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score,
+    f1_score, classification_report, confusion_matrix, roc_auc_score
+)
+
+acc  = accuracy_score(y_test, y_pred)
+prec = precision_score(y_test, y_pred, average=<span class="st">'weighted'</span>)
+rec  = recall_score(y_test, y_pred, average=<span class="st">'weighted'</span>)
+f1   = f1_score(y_test, y_pred, average=<span class="st">'weighted'</span>)
+auc  = roc_auc_score(y_test, y_prob)
+
+<span class="fn">print</span>(<span class="st">f"Accuracy:  {acc:.4f}"</span>)
+<span class="fn">print</span>(<span class="st">f"Precision: {prec:.4f}"</span>)
+<span class="fn">print</span>(<span class="st">f"Recall:    {rec:.4f}"</span>)
+<span class="fn">print</span>(<span class="st">f"F1 Score:  {f1:.4f}"</span>)
+<span class="fn">print</span>(<span class="st">f"ROC-AUC:   {auc:.4f}"</span>)
+
+<span class="fn">print</span>(<span class="st">"\n--- Full Report ---"</span>)
+<span class="fn">print</span>(classification_report(y_test, y_pred))</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">10.2 Confusion matrix</div>
+<div class="code-block"><div class="code-label">python</div><pre>cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm, annot=True, fmt=<span class="st">'d'</span>, cmap=<span class="st">'Blues'</span>,
+            xticklabels=model.classes_,
+            yticklabels=model.classes_)
+plt.xlabel(<span class="st">'Predicted'</span>); plt.ylabel(<span class="st">'Actual'</span>)
+plt.title(<span class="st">'Confusion Matrix'</span>); plt.show()</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">10.3 Regression metrics</div>
+<div class="code-block"><div class="code-label">python</div><pre>from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
+mse  = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+mae  = mean_absolute_error(y_test, y_pred)
+r2   = r2_score(y_test, y_pred)
+mape = np.mean(np.abs((y_test - y_pred) / y_test)) * 100  <span class="cm"># % error</span>
+
+<span class="fn">print</span>(<span class="st">f"RMSE: {rmse:.2f}"</span>)
+<span class="fn">print</span>(<span class="st">f"MAE:  {mae:.2f}"</span>)
+<span class="fn">print</span>(<span class="st">f"R²:   {r2:.4f}"</span>)
+<span class="fn">print</span>(<span class="st">f"MAPE: {mape:.2f}%"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">10.4 Feature importance</div>
+<div class="code-block"><div class="code-label">python</div><pre>importance = pd.Series(model.feature_importances_, index=X.columns)
+importance.sort_values(ascending=True).tail(15).plot(
+    kind=<span class="st">'barh'</span>, figsize=(8, 6), color=<span class="st">'#4a90d9'</span>
+)
+plt.title(<span class="st">'Top 15 Most Important Features'</span>)
+plt.tight_layout(); plt.show()</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<table class="ref">
+<tr><th>Metric</th><th>Use when...</th><th>Range</th></tr>
+<tr><td><code>Accuracy</code></td><td>Balanced classes</td><td>0–1</td></tr>
+<tr><td><code>F1 Score</code></td><td>Imbalanced classes</td><td>0–1</td></tr>
+<tr><td><code>ROC-AUC</code></td><td>Ranking by probability</td><td>0.5–1</td></tr>
+<tr><td><code>RMSE</code></td><td>Regression, penalizes large errors</td><td>0–∞ (lower=better)</td></tr>
+<tr><td><code>R²</code></td><td>Regression, % variance explained</td><td>0–1</td></tr>
+<tr><td><code>MAPE</code></td><td>Regression, % error (interpretable)</td><td>0–∞%</td></tr>
+</table>`
+},
+{tag:"Chapter 11 — Reporting",title:"Reporting & Communication",desc:"Export results, format outputs, and communicate your findings clearly to stakeholders.",
+content:`<div class="section-title">11.0 Reporting structure (what to include)</div>
+<ol class="workflow">
+<li><strong>Context and goal</strong><span>State the business question, period, scope, and why this analysis matters.</span></li>
+<li><strong>Data quality summary</strong><span>Mention missingness, exclusions, cleaning rules, and any bias risks.</span></li>
+<li><strong>Core findings</strong><span>Share 3-5 key insights with numbers, not only visuals.</span></li>
+<li><strong>Method transparency</strong><span>Explain transformations, statistics/tests/models used and why they were selected.</span></li>
+<li><strong>Limitations</strong><span>Clearly state what you cannot claim from this dataset.</span></li>
+<li><strong>Actionable recommendations</strong><span>Tie each recommendation to evidence and expected impact.</span></li>
+</ol>
+<table class="ref">
+<tr><th>Report element</th><th>Use when</th><th>Why</th><th>Skip when</th></tr>
+<tr><td>Executive summary</td><td>Any stakeholder audience</td><td>Gives fast decisions without technical detail</td><td>Never skip</td></tr>
+<tr><td>Technical appendix</td><td>Data/ML teams review results</td><td>Ensures reproducibility and trust</td><td>Skip for non-technical one-page brief</td></tr>
+<tr><td>Raw table dump</td><td>Audit/compliance request</td><td>Traceability</td><td>Skip in presentation deck; move to appendix</td></tr>
+<tr><td>Method comparison</td><td>You tested multiple approaches</td><td>Shows why final method was chosen</td><td>Skip only if one method was clearly mandated</td></tr>
+</table>
+<div class="section-title">11.1 Export tables and results</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Export to CSV</span>
+df.to_csv(<span class="st">'output/results.csv'</span>, index=False)
+
+<span class="cm"># Export multiple sheets to Excel</span>
+with pd.ExcelWriter(<span class="st">'output/report.xlsx'</span>, engine=<span class="st">'openpyxl'</span>) as writer:
+    df.to_excel(writer, sheet_name=<span class="st">'Data'</span>, index=False)
+    df.describe().to_excel(writer, sheet_name=<span class="st">'Summary'</span>)
+    summary.to_excel(writer, sheet_name=<span class="st">'Analysis'</span>, index=False)
+
+<span class="cm"># Save a chart as high-resolution image</span>
+plt.savefig(<span class="st">'output/chart.png'</span>, dpi=150, bbox_inches=<span class="st">'tight'</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">11.2 Format DataFrame for display</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Style table in Jupyter</span>
+(df.style
+  .highlight_max(subset=[<span class="st">'sales'</span>], color=<span class="st">'#d4edda'</span>)
+  .highlight_min(subset=[<span class="st">'sales'</span>], color=<span class="st">'#f8d7da'</span>)
+  .format({
+      <span class="st">'sales'</span>: <span class="st">'&#36;{:,.0f}'</span>,
+      <span class="st">'growth_pct'</span>: <span class="st">'{:.1%}'</span>,
+      <span class="st">'date'</span>: <span class="st">'{:%Y-%m-%d}'</span>
+  })
+  .background_gradient(subset=[<span class="st">'score'</span>], cmap=<span class="st">'RdYlGn'</span>)
+  .set_caption(<span class="st">'Monthly Sales Report'</span>)
+)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">11.3 Create a summary dashboard function</div>
+<div class="code-block"><div class="code-label">python</div><pre>def quick_report(df, numeric_col, category_col=None):
+    <span class="st">"""Quick summary report for any numeric column."""</span>
+    <span class="fn">print</span>(<span class="st">f"=== Report: {numeric_col} ==="</span>)
+    <span class="fn">print</span>(<span class="st">f"Count:    {df[numeric_col].count():,}"</span>)
+    <span class="fn">print</span>(<span class="st">f"Mean:     {df[numeric_col].mean():,.2f}"</span>)
+    <span class="fn">print</span>(<span class="st">f"Median:   {df[numeric_col].median():,.2f}"</span>)
+    <span class="fn">print</span>(<span class="st">f"Std Dev:  {df[numeric_col].std():,.2f}"</span>)
+    <span class="fn">print</span>(<span class="st">f"Min/Max:  {df[numeric_col].min():,.2f} / {df[numeric_col].max():,.2f}"</span>)
+
+    if category_col:
+        <span class="fn">print</span>(<span class="st">f"\nBy {category_col}:"</span>)
+        <span class="fn">print</span>(df.groupby(category_col)[numeric_col].mean().sort_values(ascending=False))
+
+quick_report(df, <span class="st">'salary'</span>, <span class="st">'department'</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">11.4 Analytics project checklist</div>
+<ul class="steps">
+<li>Define the business question before touching any data</li>
+<li>Understand the data source: who collected it, how, and when</li>
+<li>Run EDA and document all findings and anomalies</li>
+<li>Save df_raw = df.copy() before any cleaning</li>
+<li>Document every cleaning decision with a comment explaining why</li>
+<li>Validate your findings: do they make sense in real life?</li>
+<li>Use at least 2 different methods to confirm important conclusions</li>
+<li>Present findings visually — stakeholders read charts, not tables</li>
+<li>State limitations and data quality issues in your report</li>
+<li>Save cleaned data + notebook for full reproducibility</li>
+</ul>
+<div class="section-title">11.5 Full library reference</div>
+<table class="ref">
+<tr><th>Library</th><th>Purpose</th><th>Key functions</th></tr>
+<tr><td><code>pandas</code></td><td>Data manipulation</td><td>read_csv, groupby, merge, pivot_table</td></tr>
+<tr><td><code>numpy</code></td><td>Math & arrays</td><td>array, mean, std, log1p, where</td></tr>
+<tr><td><code>matplotlib</code></td><td>Base plotting</td><td>plot, subplots, savefig</td></tr>
+<tr><td><code>seaborn</code></td><td>Statistical charts</td><td>histplot, boxplot, heatmap, pairplot</td></tr>
+<tr><td><code>plotly</code></td><td>Interactive charts</td><td>scatter, bar, line, choropleth</td></tr>
+<tr><td><code>scipy</code></td><td>Statistical tests</td><td>ttest_ind, chi2_contingency, normaltest</td></tr>
+<tr><td><code>scikit-learn</code></td><td>Machine learning</td><td>fit, predict, cross_val_score, GridSearchCV</td></tr>
+<tr><td><code>openpyxl</code></td><td>Excel files</td><td>Used by pandas to read/write xlsx</td></tr>
+</table>
+<div class="tip">Great analysts ask "why?" at every step. Numbers tell a story — your job is to find it and communicate it clearly.</div>`
+},
+{tag:"Chapter 12 — Professional",title:"Documentation, Ethics & Optimization",desc:"Professional analytics workflow: reproducibility, data privacy, bias checks, and performance scaling for large datasets.",
+content:`<div class="section-title">12.0 Documentation & reproducibility</div>
+<table class="ref">
+<tr><th>Practice</th><th>How to apply</th><th>Why it matters</th></tr>
+<tr><td>Version control</td><td>Use Git with clear commits for each analysis stage</td><td>Traceable decisions and safe rollback</td></tr>
+<tr><td>README</td><td>Describe goal, data source, pipeline, and outputs</td><td>Fast onboarding for reviewers/interviewers</td></tr>
+<tr><td>Data dictionary</td><td>List columns, definitions, units, and valid ranges</td><td>Prevents interpretation mistakes</td></tr>
+<tr><td>Reproducible steps</td><td>Pin package versions and run steps in order</td><td>Same results across machines</td></tr>
+</table>
+<div class="note"><strong>Notebook vs script:</strong> notebook is best for exploration and storytelling; script is best for automation, CI, and repeatable production tasks. Keep both for serious projects.</div>
+<div class="section-title">12.1 Data ethics & privacy</div>
+<ul class="steps">
+<li>Remove or mask personal identifiers before sharing datasets</li>
+<li>Restrict access to sensitive columns (PII, health, finance)</li>
+<li>Check demographic bias in model outputs and errors</li>
+<li>Explain ethical limits: what your model should NOT decide</li>
+<li>Record consent, legal restrictions, and retention policy</li>
+</ul>
+<div class="warn">Do not expose personal data in screenshots, dashboards, or exported notebooks. Create anonymized demo versions for portfolio use.</div>
+<div class="section-title">12.2 Performance optimization for large datasets</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Memory profile</span>
+df.memory_usage(deep=True).sort_values(ascending=False).head(10)
+
+<span class="cm"># Use category dtype for low-cardinality text columns</span>
+for c in [<span class="st">'city'</span>, <span class="st">'department'</span>, <span class="st">'status'</span>]:
+    df[c] = df[c].astype(<span class="st">'category'</span>)
+
+<span class="cm"># Load only required columns</span>
+df = pd.read_csv(<span class="st">'data/raw/sales.csv'</span>, usecols=[<span class="st">'date'</span>, <span class="st">'region'</span>, <span class="st">'revenue'</span>])
+
+<span class="cm"># Process in chunks</span>
+for chunk in pd.read_csv(<span class="st">'data/raw/huge.csv'</span>, chunksize=10000):
+    <span class="cm"># transform chunk then append aggregate</span>
+    pass</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="tip">For repeated heavy workloads, store processed tables as Parquet and run aggregations at source (SQL) before loading to Python.</div>`
+},
+{tag:"Chapter 13 — Career",title:"Portfolio & Career Execution",desc:"Turn analysis work into interview-ready portfolio projects with clear business impact.",
+content:`<div class="section-title">13.0 Portfolio roadmap</div>
+<ol class="workflow">
+<li><strong>Build 3 real projects</strong><span>Use different domains (sales, customer churn, operations) and document end-to-end workflow.</span></li>
+<li><strong>Publish to GitHub</strong><span>Each project should include README, notebook/script, data dictionary, and output visuals.</span></li>
+<li><strong>Create portfolio website</strong><span>Present project story, your role, stack used, and measurable outcomes.</span></li>
+<li><strong>Explain simply</strong><span>Practice non-technical explanation: what happened, why, and what action to take.</span></li>
+<li><strong>Show business impact</strong><span>Quantify value: revenue uplift, cost reduction, risk reduction, or speed improvement.</span></li>
+</ol>
+<div class="section-title">13.1 Interview-ready project template</div>
+<table class="ref">
+<tr><th>Section</th><th>What to include</th></tr>
+<tr><td>Problem</td><td>Business pain point and success metric</td></tr>
+<tr><td>Data</td><td>Source, timeframe, grain, quality challenges</td></tr>
+<tr><td>Approach</td><td>Cleaning, EDA, feature logic, model/testing choices</td></tr>
+<tr><td>Result</td><td>Charts + metrics + key insights</td></tr>
+<tr><td>Recommendation</td><td>Concrete action with expected impact</td></tr>
+<tr><td>Limitations</td><td>Known risks, assumptions, and next iteration plan</td></tr>
+</table>
+<div class="tip">Recruiters and hiring managers remember projects that connect technical work to a business decision. Always include decision impact, not only model score.</div>`
+},
+{tag:"Chapter 14 — Documentation",title:"Project Documentation Pack",desc:"Ready-to-use templates and standards for README, data dictionary, validation log, and handover notes.",
+content:`<div class="section-title">14.0 Why this chapter matters</div>
+<div class="note"><strong>Good analysis without documentation is hard to trust and hard to reuse.</strong> Use this chapter as your final quality gate before sharing a notebook, dashboard, or model output.</div>
+<div class="section-title">14.1 Required documentation set</div>
+<table class="ref">
+<tr><th>Document</th><th>Minimum content</th><th>Owner</th><th>Update frequency</th></tr>
+<tr><td>README</td><td>Business goal, data source, setup steps, outputs, limitations</td><td>Analyst</td><td>Every major update</td></tr>
+<tr><td>Data dictionary</td><td>Column name, meaning, type, units, allowed values, null policy</td><td>Analyst + data owner</td><td>When schema changes</td></tr>
+<tr><td>Cleaning log</td><td>What changed, why changed, impact on row count/metrics</td><td>Analyst</td><td>Every cleaning operation</td></tr>
+<tr><td>Validation log</td><td>Checks run, pass/fail result, unresolved issues</td><td>Analyst / reviewer</td><td>Before reporting</td></tr>
+<tr><td>Handover note</td><td>How to rerun analysis, dependencies, known risks, next steps</td><td>Project owner</td><td>At delivery</td></tr>
+</table>
+<div class="section-title">14.2 Validation checklist before publish</div>
+<ul class="steps">
+<li>Business question and target KPI are written in one sentence</li>
+<li>Data source and extraction date are documented</li>
+<li>All filters/cleaning rules are explained</li>
+<li>Key assumptions are stated and justified</li>
+<li>At least one limitation and one risk are reported</li>
+<li>Charts include units, time range, and interpretation note</li>
+<li>Result files are reproducible from the notebook/script</li>
+<li>Privacy-sensitive columns are masked or removed</li>
+</ul>
+<div class="section-title">14.3 Markdown starter templates</div>
+<div class="code-block"><div class="code-label">README.md skeleton</div><pre># Project Title
+
+## Business Question
+- What decision this analysis supports
+
+## Data Source
+- File/table name
+- Date range
+- Row granularity
+
+## Method Overview
+1. Data loading
+2. EDA
+3. Cleaning and transformation
+4. Analysis/modeling
+5. Reporting
+
+## Key Findings
+- Insight 1
+- Insight 2
+
+## Limitations
+- Limitation 1
+
+## Repro Steps
+- Install dependencies
+- Run notebook/script order
+</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="code-block"><div class="code-label">Data dictionary skeleton</div><pre>| column_name | description | dtype | unit | allowed_values | null_policy |
+|---|---|---|---|---|---|
+| customer_id | unique customer key | string | n/a | unique | never null |
+| order_date | transaction date | datetime | yyyy-mm-dd | valid dates | drop if null |
+| revenue | order revenue | float | USD | >= 0 | fill 0 if missing |
+</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="tip">Use the sidebar template tools to copy or save these documents quickly for every new project.</div>`
+}
+];
+
+let current = 0;
+const nav = document.getElementById('nav');
+const chaptersEl = document.getElementById('chapters');
+const progress = document.getElementById('progress');
+const chapterSearch = document.getElementById('chapterSearch');
+const chapterStats = document.getElementById('chapterStats');
+const docTemplate = document.getElementById('docTemplate');
+const copyDocTemplate = document.getElementById('copyDocTemplate');
+const downloadDocTemplate = document.getElementById('downloadDocTemplate');
+
+const STORAGE_KEYS = {
+    completed: 'da_notebook_completed',
+    bookmarks: 'da_notebook_bookmarks',
+    theme: 'da_notebook_theme'
+};
+
+const completed = JSON.parse(localStorage.getItem(STORAGE_KEYS.completed) || '[]');
+const bookmarks = JSON.parse(localStorage.getItem(STORAGE_KEYS.bookmarks) || '[]');
+
+const chapterMistakes = {
+    'Exploratory Data Analysis': [
+        'Using mean on skewed data without checking distribution first',
+        'Ignoring duplicates and then trusting wrong aggregates',
+        'Assuming correlation means causation'
+    ],
+    'Data Cleaning': [
+        'Dropping null values blindly without checking missingness pattern',
+        'Converting dtypes without validating failed coercions',
+        'Deleting all outliers even when they are real business events'
+    ],
+    'Data Visualization': [
+        'Using pie charts for high-cardinality categories',
+        'Using wrong chart type for the question',
+        'Publishing charts without axis units or context'
+    ],
+    default: [
+        'Skipping business context before running technical steps',
+        'Not writing assumptions and limitations explicitly',
+        'Treating one metric as the full story'
+    ]
+};
+
+const chapterCheatsheets = {
+    default: [
+        { cmd: 'df.info()', desc: 'Structure and non-null counts' },
+        { cmd: 'df.describe()', desc: 'Numeric summary statistics' },
+        { cmd: 'df.isnull().sum()', desc: 'Missing-value counts by column' },
+        { cmd: 'df.groupby()', desc: 'Segmented aggregation' },
+        { cmd: 'pd.merge()', desc: 'Join multiple datasets' }
+    ],
+    'Machine Learning Basics': [
+        { cmd: 'train_test_split()', desc: 'Create holdout set before training' },
+        { cmd: 'model.fit()', desc: 'Train model on training data' },
+        { cmd: 'model.predict()', desc: 'Generate predicted labels/values' },
+        { cmd: 'classification_report()', desc: 'Precision/recall/F1 breakdown' },
+        { cmd: 'cross_val_score()', desc: 'Cross-validated performance' }
+    ]
+};
+
+const documentationTemplates = {
+    readme: `# Project Title
+
+## Business Question
+- What decision this analysis supports
+
+## Data Source
+- Source:
+- Date pulled:
+- Time range:
+- Grain:
+
+## Workflow
+1. Data loading
+2. EDA
+3. Cleaning
+4. Transformation / feature engineering
+5. Analysis or modeling
+6. Reporting
+
+## Key Findings
+- Finding 1
+- Finding 2
+
+## Limitations
+- Limitation 1
+
+## Reproducibility
+- Python version:
+- Libraries:
+- Run order:
+`,
+    dictionary: `| column_name | description | dtype | unit | allowed_values | null_policy |
+|---|---|---|---|---|---|
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
+`,
+    analysis: `# Analysis Log
+
+## Project
+- Name:
+- Analyst:
+- Date:
+
+## Step-by-step record
+| step | action | reason | impact |
+|---|---|---|---|
+| data load |  |  |  |
+| cleaning |  |  |  |
+| transformation |  |  |  |
+| validation |  |  |  |
+
+## Open Issues
+- Issue 1
+
+## Next Actions
+- Action 1
+`
+};
+
+function getProjectExecutionTemplate() {
+    return `<div class="section-title">Project Execution Template</div>
+<div class="note"><strong>Use this template before you start every project.</strong> It keeps analysis focused and interview-ready.</div>
+<table class="ref">
+<tr><th>Field</th><th>Your note</th></tr>
+<tr><td>Problem statement</td><td>What business issue are you solving?</td></tr>
+<tr><td>Dataset</td><td>Name, source, timeframe, granularity</td></tr>
+<tr><td>Objective</td><td>What decision should this analysis support?</td></tr>
+<tr><td>KPI / metric</td><td>Primary success measure</td></tr>
+<tr><td>Hypothesis</td><td>What do you expect and why?</td></tr>
+</table>
+<ul class="steps">
+<li>Business question clearly defined</li>
+<li>Stakeholder identified</li>
+<li>Expected output decided (dashboard / report / model)</li>
+</ul>
+<div class="tip">Why this helps: it makes your notebook reusable for portfolio and job interviews, not just one-off analysis.</div>`;
+}
+
+function getMLStarterSection() {
+    return `<div class="section-title">ML starter flow (copy template)</div>
+<div class="note"><strong>Classification predicts categories</strong> (churn yes/no, fraud yes/no). <strong>Regression predicts numbers</strong> (sales, price, demand). Start with a simple baseline before complex models.</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Train-test split</span>
+X = df.drop(<span class="st">'target'</span>, axis=1)
+y = df[<span class="st">'target'</span>]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+<span class="cm"># Model</span>
+from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()
+
+model.fit(X_train, y_train)
+
+<span class="cm"># Prediction</span>
+y_pred = model.predict(X_test)
+
+<span class="cm"># Evaluation</span>
+accuracy_score(y_test, y_pred)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>`;
+}
+
+function getReportingBooster() {
+    return `<div class="section-title">Dashboard & business storytelling</div>
+<div class="tip">Build your final output in Power BI, Tableau, or Excel depending on stakeholder tooling. Export a clean dataset and always answer three questions: what happened, why it happened, and what we should do next.</div>`;
+}
+
+function buildMistakesSection(title) {
+    const items = chapterMistakes[title] || chapterMistakes.default;
+    return `<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes">${items.map(x => `<li>${x}</li>`).join('')}</ul>`;
+}
+
+function buildCheatSheetSection(title) {
+    const rows = chapterCheatsheets[title] || chapterCheatsheets.default;
+    return `<div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid">${rows.map(r => `<div class="cheat-item"><code>${r.cmd}</code> -> ${r.desc}</div>`).join('')}</div>`;
+}
+
+function buildChapterSupplement(ch, index) {
+    let intro = '';
+    if (index === 0) intro += getProjectExecutionTemplate();
+    if (ch.title === 'Machine Learning Basics') intro += getMLStarterSection();
+    if (ch.title === 'Reporting & Communication') intro += getReportingBooster();
+
+    return `${intro}${buildMistakesSection(ch.title)}${buildCheatSheetSection(ch.title)}`;
+}
+
+function getCompletionPct() {
+    return Math.round((completed.length / chapters.length) * 100);
+}
+
+function saveState() {
+    localStorage.setItem(STORAGE_KEYS.completed, JSON.stringify(completed));
+    localStorage.setItem(STORAGE_KEYS.bookmarks, JSON.stringify(bookmarks));
+}
+
+function toggleComplete(index) {
+    const pos = completed.indexOf(index);
+    if (pos >= 0) completed.splice(pos, 1);
+    else completed.push(index);
+    saveState();
+    updateSidebarState();
+    renderChapterMeta(index);
+}
+
+function toggleBookmark(index) {
+    const pos = bookmarks.indexOf(index);
+    if (pos >= 0) bookmarks.splice(pos, 1);
+    else bookmarks.push(index);
+    saveState();
+    updateSidebarState();
+    renderChapterMeta(index);
+}
+
+function renderChapterMeta(index) {
+    const chapter = document.querySelectorAll('.chapter')[index];
+    const wrap = chapter.querySelector('.chapter-meta');
+    if (!wrap) return;
+    const isDone = completed.includes(index);
+    const isStarred = bookmarks.includes(index);
+    wrap.innerHTML = `
+        <button class="meta-btn ${isDone ? 'done' : ''}" onclick="toggleComplete(${index})">${isDone ? 'Completed' : 'Mark as completed'}</button>
+        <button class="meta-btn ${isStarred ? 'starred' : ''}" onclick="toggleBookmark(${index})">${isStarred ? 'Bookmarked' : 'Bookmark'}</button>
+    `;
+}
+
+function updateSidebarState() {
+    chapterStats.textContent = `Completed: ${getCompletionPct()}%`;
+    progress.style.width = `${getCompletionPct()}%`;
+    document.querySelectorAll('.nav-item').forEach((item, i) => {
+        item.classList.toggle('bookmarked', bookmarks.includes(i));
+    });
+}
+
+function resetProgress() {
+    const confirmed = window.confirm('Reset all completed progress for a new project?');
+    if (!confirmed) return;
+
+    completed.length = 0;
+    saveState();
+    updateSidebarState();
+
+    document.querySelectorAll('.chapter').forEach((chapter) => {
+        const meta = chapter.querySelector('.chapter-meta');
+        if (meta) {
+            const index = Array.from(document.querySelectorAll('.chapter')).indexOf(chapter);
+            if (index >= 0) renderChapterMeta(index);
+        }
+    });
+
+    if (current !== 0) {
+        goTo(0);
+    } else {
+        document.querySelectorAll('.chapter')[0].classList.add('active');
+        document.querySelectorAll('.nav-item')[0].classList.add('active');
+        window.scrollTo(0,0);
+    }
+}
+
+chapters.forEach((ch, i) => {
+  const item = document.createElement('div');
+  item.className = 'nav-item' + (i===0?' active':'');
+  item.innerHTML = `<span class="nav-num">${String(i+1).padStart(2,'0')}</span>${ch.title}`;
+  item.onclick = () => goTo(i);
+  nav.appendChild(item);
+
+  const div = document.createElement('div');
+  div.className = 'chapter' + (i===0?' active':'');
+  div.innerHTML = `
+    <div class="ch-tag">${ch.tag}</div>
+    <div class="ch-title">${ch.title}</div>
+    <div class="ch-desc">${ch.desc}</div>
+        <div class="chapter-meta"></div>
+    ${ch.content}
+    ${buildChapterSupplement(ch, i)}
+    <div class="nav-footer">
+      ${i>0?`<button class="nav-btn" onclick="goTo(${i-1})">&#8592; Previous</button>`:'<span></span>'}
+      ${i<chapters.length-1?`<button class="nav-btn primary" onclick="goTo(${i+1})">Next &#8594;</button>`:'<div style="font-size:14px;color:#22c55e;font-weight:600">&#10003; Notebook complete!</div>'}
+    </div>`;
+  chaptersEl.appendChild(div);
+    renderChapterMeta(i);
+});
+
+document.querySelectorAll('.code-block').forEach(block => {
+    const label = block.querySelector('.code-label');
+    if (!label) return;
+
+    const normalized = label.textContent.trim().toLowerCase();
+    let langClass = 'lang-generic';
+
+    if (normalized.includes('python')) langClass = 'lang-python';
+    else if (normalized.includes('terminal') || normalized.includes('shell') || normalized.includes('bash')) langClass = 'lang-terminal';
+    else if (normalized.includes('layout') || normalized.includes('structure')) langClass = 'lang-layout';
+
+    block.classList.add(langClass);
+});
+
+function goTo(idx) {
+  document.querySelectorAll('.chapter')[current].classList.remove('active');
+  document.querySelectorAll('.nav-item')[current].classList.remove('active');
+  current = idx;
+  document.querySelectorAll('.chapter')[current].classList.add('active');
+  document.querySelectorAll('.nav-item')[current].classList.add('active');
+  window.scrollTo(0,0);
+  document.querySelectorAll('.nav-item')[current].scrollIntoView({block:'nearest'});
+}
+
+chapterSearch.addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('.nav-item').forEach((item) => {
+        const text = item.textContent.toLowerCase();
+        item.classList.toggle('hidden', q && !text.includes(q));
+    });
+});
+
+document.getElementById('toggleTheme').addEventListener('click', () => {
+    document.body.classList.toggle('light-theme');
+    const isLight = document.body.classList.contains('light-theme');
+    localStorage.setItem(STORAGE_KEYS.theme, isLight ? 'light' : 'dark');
+});
+
+document.getElementById('resetProgress').addEventListener('click', resetProgress);
+
+if (localStorage.getItem(STORAGE_KEYS.theme) === 'light') {
+    document.body.classList.add('light-theme');
+}
+updateSidebarState();
+
+copyDocTemplate.addEventListener('click', () => {
+    const key = docTemplate.value;
+    const text = documentationTemplates[key] || '';
+    navigator.clipboard.writeText(text).then(() => {
+        copyDocTemplate.textContent = 'Copied';
+        setTimeout(() => { copyDocTemplate.textContent = 'Copy'; }, 1400);
+    });
+});
+
+downloadDocTemplate.addEventListener('click', () => {
+    const key = docTemplate.value;
+    const text = documentationTemplates[key] || '';
+    const ext = key === 'dictionary' ? 'md' : 'md';
+    const fileName = `${key}_template.${ext}`;
+    const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+});
+
+function copyCode(btn) {
+  const pre = btn.previousElementSibling;
+  const text = pre ? pre.innerText : '';
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='Copied!';
+    btn.style.color='#22c55e';
+    setTimeout(()=>{btn.textContent='copy';btn.style.color='';},1500);
+  });
+}
+</script>
+</body>
+</html>
