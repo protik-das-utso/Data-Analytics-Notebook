@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Transformation — Data Analytics Notebook</title>
+<meta name="description" content="Reshape, aggregate, merge, and manipulate your data into the form needed for analysis.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/05-data-transformation.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Data Transformation — Data Analytics Notebook">
+<meta property="og:description" content="Reshape, aggregate, merge, and manipulate your data into the form needed for analysis.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/05-data-transformation.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Data Transformation — Data Analytics Notebook">
+<meta name="twitter:title" content="Data Transformation — Data Analytics Notebook">
+<meta name="twitter:description" content="Reshape, aggregate, merge, and manipulate your data into the form needed for analysis.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Data Transformation",
+  "description": "Reshape, aggregate, merge, and manipulate your data into the form needed for analysis.",
+  "url": "https://danotebook.protik.dev/chapters/05-data-transformation.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Core Workflow"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Core Workflow"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Data Transformation",
+    "item": "https://danotebook.protik.dev/chapters/05-data-transformation.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="05-data-transformation.html" data-num="5">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 05 — Transform</div>
+<h1 class="ch-title">Data Transformation</h1>
+<p class="ch-desc">Reshape, aggregate, merge, and manipulate your data into the form needed for analysis.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+<div class="section-title">5.0 Transformation strategy (when / why / skip)</div>
+<table class="ref">
+<tr><th>Method</th><th>Use when</th><th>Why use it</th><th>Skip when</th></tr>
+<tr><td>Filter rows</td><td>You need scope-specific analysis</td><td>Removes irrelevant records early</td><td>Skip permanent filtering until you save a full backup slice</td></tr>
+<tr><td>GroupBy aggregation</td><td>You need KPIs by segment</td><td>Converts row-level noise into decision-level metrics</td><td>Skip when event-level timing is critical</td></tr>
+<tr><td>Pivot table</td><td>Matrix-style summaries for reporting</td><td>Fast comparison across two dimensions</td><td>Skip for high-cardinality columns with huge sparse matrices</td></tr>
+<tr><td>Merge / join</td><td>Metrics are split across sources</td><td>Builds a complete analytical view</td><td>Skip before checking key uniqueness and join cardinality</td></tr>
+<tr><td>Custom apply/map</td><td>Business logic is not built-in</td><td>Encodes domain rules explicitly</td><td>Skip row-wise apply on very large data when vectorized options exist</td></tr>
+</table>
+<div class="warn">Before any merge, check one-to-one vs one-to-many key behavior. Wrong join cardinality can silently duplicate rows and break all downstream metrics.</div>
+<div class="xforge"><span class="xf-tag">DataXForge</span>Reshape data visually: <a href="https://dataxforge.com/tools/filter-rows" target="_blank" rel="noopener">Filter Rows</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/sort-data" target="_blank" rel="noopener">Sort Data</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/merge-datasets" target="_blank" rel="noopener">Merge Datasets</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/rename-columns" target="_blank" rel="noopener">Rename Columns</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/etl-studio" target="_blank" rel="noopener">ETL Studio</a> for full pipelines.</div>
+<div class="section-title">5.1 Select and filter</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Select specific columns</span>
+df[[<span class="st">'name'</span>, <span class="st">'age'</span>, <span class="st">'salary'</span>]]
+
+<span class="cm"># Filter rows by condition</span>
+df[df[<span class="st">'age'</span>] > 30]
+df[(df[<span class="st">'age'</span>] > 30) & (df[<span class="st">'salary'</span>] > 50000)]
+df[df[<span class="st">'city'</span>].isin([<span class="st">'Dhaka'</span>, <span class="st">'Chittagong'</span>])]
+df[~df[<span class="st">'status'</span>].isin([<span class="st">'Inactive'</span>])]   <span class="cm"># NOT in list</span>
+
+<span class="cm"># Query syntax (cleaner for complex filters)</span>
+df.query(<span class="st">'age > 30 and salary > 50000 and city == "Dhaka"'</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">5.2 Sort and rank</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Sort by one column</span>
+df.sort_values(<span class="st">'salary'</span>, ascending=False)
+
+<span class="cm"># Sort by multiple columns</span>
+df.sort_values([<span class="st">'department'</span>, <span class="st">'salary'</span>], ascending=[True, False])
+
+<span class="cm"># Add rank column</span>
+df[<span class="st">'rank'</span>] = df[<span class="st">'salary'</span>].rank(ascending=False).astype(<span class="st">'int'</span>)
+df[<span class="st">'pct_rank'</span>] = df[<span class="st">'salary'</span>].rank(pct=True)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">5.3 Group and aggregate</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Simple groupby</span>
+df.groupby(<span class="st">'department'</span>)[<span class="st">'salary'</span>].mean()
+
+<span class="cm"># Multiple aggregations (named)</span>
+summary = df.groupby(<span class="st">'department'</span>).agg(
+    avg_salary=(<span class="st">'salary'</span>, <span class="st">'mean'</span>),
+    max_salary=(<span class="st">'salary'</span>, <span class="st">'max'</span>),
+    min_salary=(<span class="st">'salary'</span>, <span class="st">'min'</span>),
+    headcount=(<span class="st">'id'</span>, <span class="st">'count'</span>)
+).reset_index()
+
+<span class="cm"># Pivot table</span>
+pivot = df.pivot_table(
+    values=<span class="st">'sales'</span>,
+    index=<span class="st">'region'</span>,
+    columns=<span class="st">'product'</span>,
+    aggfunc=<span class="st">'sum'</span>,
+    fill_value=0
+)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">5.4 Merge and join datasets</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Inner join (only matching rows in both)</span>
+merged = pd.merge(df1, df2, on=<span class="st">'customer_id'</span>, how=<span class="st">'inner'</span>)
+
+<span class="cm"># Left join (keep all rows from df1)</span>
+merged = pd.merge(df1, df2, on=<span class="st">'id'</span>, how=<span class="st">'left'</span>)
+
+<span class="cm"># Join on different column names</span>
+merged = pd.merge(df1, df2, left_on=<span class="st">'cust_id'</span>, right_on=<span class="st">'id'</span>)
+
+<span class="cm"># Stack rows (same columns)</span>
+combined = pd.concat([df_2023, df_2024], ignore_index=True)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">5.5 Apply custom transformations</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Apply to a column</span>
+df[<span class="st">'name_upper'</span>] = df[<span class="st">'name'</span>].apply(<span class="kw">lambda</span> x: x.upper() if pd.notna(x) else x)
+
+<span class="cm"># Apply across columns (axis=1)</span>
+df[<span class="st">'full_name'</span>] = df.apply(<span class="kw">lambda</span> row: row[<span class="st">'first'</span>] + <span class="st">' '</span> + row[<span class="st">'last'</span>], axis=1)
+
+<span class="cm"># Map values</span>
+status_map = {1: <span class="st">'Active'</span>, 0: <span class="st">'Inactive'</span>}
+df[<span class="st">'status_label'</span>] = df[<span class="st">'status'</span>].map(status_map)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes"><li>Skipping business context before running technical steps</li><li>Not writing assumptions and limitations explicitly</li><li>Treating one metric as the full story</li></ul><div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid"><div class="cheat-item"><code>df.info()</code> -> Structure and non-null counts</div><div class="cheat-item"><code>df.describe()</code> -> Numeric summary statistics</div><div class="cheat-item"><code>df.isnull().sum()</code> -> Missing-value counts by column</div><div class="cheat-item"><code>df.groupby()</code> -> Segmented aggregation</div><div class="cheat-item"><code>pd.merge()</code> -> Join multiple datasets</div></div>
+<nav class="nav-footer"><a class="nav-btn" href="04-data-cleaning.html">&#8592; Previous</a><a class="nav-btn primary" href="06-feature-engineering.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

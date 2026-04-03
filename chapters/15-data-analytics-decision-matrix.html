@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Analytics Decision Matrix — Data Analytics Notebook</title>
+<meta name="description" content="The core of the handbook. Stop guessing. Use these decision trees to choose the right method for missing values, outliers, encoding, scaling, feature selection, and metrics.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/15-data-analytics-decision-matrix.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Data Analytics Decision Matrix — Data Analytics Notebook">
+<meta property="og:description" content="The core of the handbook. Stop guessing. Use these decision trees to choose the right method for missing values, outliers, encoding, scaling, feature selection, and metrics.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/15-data-analytics-decision-matrix.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Data Analytics Decision Matrix — Data Analytics Notebook">
+<meta name="twitter:title" content="Data Analytics Decision Matrix — Data Analytics Notebook">
+<meta name="twitter:description" content="The core of the handbook. Stop guessing. Use these decision trees to choose the right method for missing values, outliers, encoding, scaling, feature selection, and metrics.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Data Analytics Decision Matrix",
+  "description": "The core of the handbook. Stop guessing. Use these decision trees to choose the right method for missing values, outliers, encoding, scaling, feature selection, and metrics.",
+  "url": "https://danotebook.protik.dev/chapters/15-data-analytics-decision-matrix.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Decision Guides"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Decision Guides"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Data Analytics Decision Matrix",
+    "item": "https://danotebook.protik.dev/chapters/15-data-analytics-decision-matrix.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="15-data-analytics-decision-matrix.html" data-num="15">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 15 — Decision Matrix</div>
+<h1 class="ch-title">Data Analytics Decision Matrix</h1>
+<p class="ch-desc">The core of the handbook. Stop guessing. Use these decision trees to choose the right method for missing values, outliers, encoding, scaling, feature selection, and metrics.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+<div class="front-hero">
+<h3>I have this data and this goal. What should I do next?</h3>
+<p>This is the chapter you open mid-project. Each section gives a decision tree, a comparison table, and a professional recommendation — so you choose with reasons, not habit.</p>
+<div class="front-badges"><span class="front-badge">Missing values</span><span class="front-badge">Outliers</span><span class="front-badge">Encoding</span><span class="front-badge">Scaling</span><span class="front-badge">Feature selection</span><span class="front-badge">Metrics</span></div>
+</div>
+<div class="section-title">15.1 Missing value decision guide</div>
+<div class="dtree"><div class="dtree-label">decision tree</div><pre>Missing Values?
+│
+├── <span class="branch">Numeric</span>
+│   ├── Normal distribution ───────► <span class="leaf">Mean</span>
+│   ├── Skewed / has outliers ─────► <span class="leaf">Median</span>
+│   └── Time series / ordered ─────► <span class="leaf">Forward / backward fill</span>
+│
+├── <span class="branch">Categorical</span>
+│   ├── One dominant value ────────► <span class="leaf">Mode</span>
+│   └── Missingness is meaningful ─► <span class="leaf">New "Unknown" category</span>
+│
+└── <span class="branch">> 40% missing in a column</span>
+    └── Low predictive value ──────► <span class="leaf">Drop the column</span></pre></div>
+<table class="ref">
+<tr><th>Method</th><th class="use">Use when</th><th class="avoid">Avoid when</th><th>Why</th></tr>
+<tr><td>Mean</td><td class="use">Symmetric numeric data</td><td class="avoid">Skewed data / outliers</td><td>Outliers drag the mean and distort fills</td></tr>
+<tr><td>Median</td><td class="use">Skewed numeric data</td><td class="avoid">Exact average behaviour needed</td><td>Robust to extreme values</td></tr>
+<tr><td>Mode</td><td class="use">Categorical columns</td><td class="avoid">Continuous numeric data</td><td>Keeps category structure intact</td></tr>
+<tr><td>Forward / back fill</td><td class="use">Time series, ordered logs</td><td class="avoid">Shuffled / unrelated rows</td><td>Uses real neighbouring values</td></tr>
+<tr><td>KNN / model impute</td><td class="use">Strong feature correlations</td><td class="avoid">Large data / tight deadlines</td><td>More accurate but slow and leak-prone</td></tr>
+<tr><td>Drop rows</td><td class="use">&lt;5% rows affected, random</td><td class="avoid">Missingness is patterned</td><td>Dropping a pattern biases the data</td></tr>
+</table>
+<div class="rec-box"><h4>Professional recommendation</h4><p style="margin:0 0 .5rem">For most tabular projects, impute numeric columns with the <strong>median</strong> and categorical columns with a <strong>"Missing" category</strong>. Add a binary <code>was_missing</code> flag when the fact of missingness might carry signal. Always impute <em>after</em> the train/test split.</p></div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Median for numeric, "Missing" flag for categorical — leak-safe order</span>
+from sklearn.impute import SimpleImputer
+
+num_imputer = SimpleImputer(strategy=<span class="st">'median'</span>)
+cat_imputer = SimpleImputer(strategy=<span class="st">'constant'</span>, fill_value=<span class="st">'Missing'</span>)
+
+<span class="cm"># fit on TRAIN only, then transform both</span>
+X_train[num_cols] = num_imputer.fit_transform(X_train[num_cols])
+X_test[num_cols]  = num_imputer.transform(X_test[num_cols])</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="xforge"><span class="xf-tag">DataXForge</span>Try it now: <a href="https://dataxforge.com/tools/missing-value-cleaner" target="_blank" rel="noopener">Missing Value Cleaner</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/outlier-detector" target="_blank" rel="noopener">Outlier Detector</a> apply these decisions to a real file in seconds.</div>
+<div class="section-title">15.2 Outlier handling guide</div>
+<div class="dtree"><div class="dtree-label">decision tree</div><pre>Outlier detected?
+│
+├── <span class="branch">Data error</span> (typo, wrong unit, impossible value)
+│   └──────────────────────────────► <span class="leaf">Remove / correct</span>
+│
+└── <span class="branch">Real event</span> (genuine extreme value)
+    ├── Goal = describe / report ──► <span class="leaf">Keep, report separately</span>
+    ├── Goal = linear model ───────► <span class="leaf">Cap (winsorize) or log-transform</span>
+    └── Goal = tree model ─────────► <span class="leaf">Keep (trees are robust)</span></pre></div>
+<table class="ref">
+<tr><th>Action</th><th class="use">Use when</th><th class="avoid">Avoid when</th></tr>
+<tr><td>Remove</td><td class="use">Confirmed data-entry error</td><td class="avoid">Value is a real rare event</td></tr>
+<tr><td>Cap / winsorize</td><td class="use">Modeling with linear / distance models</td><td class="avoid">Extreme values are the target of interest (fraud, churn spikes)</td></tr>
+<tr><td>Log / sqrt transform</td><td class="use">Right-skewed positive values</td><td class="avoid">Zeros / negatives present</td></tr>
+<tr><td>Keep as-is</td><td class="use">Tree models, anomaly detection</td><td class="avoid">Distance-based models (KNN, SVM)</td></tr>
+</table>
+<div class="warn">Never delete outliers just because they look big. In fraud, churn, and quality control the outliers <strong>are</strong> the signal you are paid to find.</div>
+<div class="section-title">15.3 Encoding selection guide</div>
+<div class="dtree"><div class="dtree-label">decision tree</div><pre>Categorical variable?
+│
+├── <span class="branch">Ordinal</span> (has order: low &lt; mid &lt; high) ─► <span class="leaf">Label / Ordinal encoding</span>
+│
+├── <span class="branch">Nominal</span> (no order)
+│   ├── Low cardinality (&lt; ~15) ──────────────► <span class="leaf">One-Hot encoding</span>
+│   └── High cardinality (zip, city, id) ──────► <span class="leaf">Target / frequency encoding</span>
+│
+└── <span class="branch">Tree model + high cardinality</span> ──────────► <span class="leaf">Native categorical (LightGBM / CatBoost)</span></pre></div>
+<table class="ref">
+<tr><th>Encoding</th><th class="use">Use when</th><th class="avoid">Avoid when</th><th>Risk</th></tr>
+<tr><td>Label / Ordinal</td><td class="use">True order exists</td><td class="avoid">No order (nominal)</td><td>Fake order misleads linear models</td></tr>
+<tr><td>One-Hot</td><td class="use">Few categories, nominal</td><td class="avoid">Hundreds of categories</td><td>Column explosion</td></tr>
+<tr><td>Target encoding</td><td class="use">High cardinality</td><td class="avoid">Small data</td><td>Leakage if not cross-fitted</td></tr>
+<tr><td>Frequency</td><td class="use">Cardinality matters as signal</td><td class="avoid">Equal-frequency categories</td><td>Collisions lose information</td></tr>
+</table>
+<div class="rec-box"><h4>Professional recommendation</h4><p style="margin:0">Default to <strong>One-Hot</strong> for nominal columns under ~15 categories. For high-cardinality columns use <strong>target encoding with K-fold cross-fitting</strong> to avoid leakage, or switch to <strong>CatBoost / LightGBM</strong> which handle categories natively.</p></div>
+<div class="section-title">15.4 Scaling selection guide</div>
+<div class="dtree"><div class="dtree-label">decision tree</div><pre>Which model?
+│
+├── <span class="branch">Distance / gradient based</span>
+│   Linear Reg · Logistic Reg · SVM · KNN · K-Means · Neural Net · PCA
+│   └──────────────────────────────► <span class="leaf">SCALING REQUIRED</span>
+│       ├── Outliers present ──────► <span class="leaf">RobustScaler</span>
+│       ├── Roughly normal ────────► <span class="leaf">StandardScaler</span>
+│       └── Bounded range needed ──► <span class="leaf">MinMaxScaler</span>
+│
+└── <span class="branch">Tree based</span>
+    Decision Tree · Random Forest · XGBoost · LightGBM
+    └──────────────────────────────► <span class="leaf">SCALING NOT REQUIRED</span></pre></div>
+<table class="ref">
+<tr><th>Scaler</th><th class="use">Use when</th><th class="avoid">Avoid when</th></tr>
+<tr><td>StandardScaler</td><td class="use">Features ~ normal, no big outliers</td><td class="avoid">Heavy outliers present</td></tr>
+<tr><td>MinMaxScaler</td><td class="use">Need [0,1] range (neural nets, images)</td><td class="avoid">Outliers compress the rest of the data</td></tr>
+<tr><td>RobustScaler</td><td class="use">Outliers present</td><td class="avoid">Clean, normal data (overkill)</td></tr>
+</table>
+<div class="warn">Leakage alert: <strong>fit the scaler on training data only</strong>, then transform test data. Fitting on the full dataset leaks test statistics into training. See Chapter 20.</div>
+<div class="section-title">15.5 Feature selection guide</div>
+<div class="dtree"><div class="dtree-label">decision tree</div><pre>Too many features?
+│
+├── <span class="branch">Remove redundancy</span>
+│   ├── Pairwise correlation &gt; 0.9 ──► <span class="leaf">Drop one of the pair</span>
+│   └── Multicollinearity (VIF &gt; 5) ─► <span class="leaf">Drop / combine</span>
+│
+├── <span class="branch">Rank relevance</span>
+│   ├── Any relationship ────────────► <span class="leaf">Mutual Information</span>
+│   └── Linear only ─────────────────► <span class="leaf">Correlation with target</span>
+│
+└── <span class="branch">Model driven</span>
+    ├── Need sparsity + speed ───────► <span class="leaf">LASSO (L1)</span>
+    └── Need explainability ─────────► <span class="leaf">SHAP importance</span></pre></div>
+<div class="rec-box"><h4>Professional recommendation</h4><p style="margin:0">Start by removing near-duplicate features (correlation &gt; 0.9 and high VIF). Then rank what remains with <strong>Mutual Information</strong> (captures non-linear links) and validate top features with <strong>SHAP</strong> on a baseline model. Avoid selecting features using the target before splitting.</p></div>
+<div class="section-title">15.6 Metric selection guide</div>
+<div class="dtree"><div class="dtree-label">decision tree</div><pre>Problem type?
+│
+├── <span class="branch">Classification</span>
+│   ├── Balanced classes ──────────► <span class="leaf">Accuracy</span>
+│   └── Imbalanced classes
+│       ├── False negatives costly ► <span class="leaf">Recall</span>
+│       ├── False positives costly ► <span class="leaf">Precision</span>
+│       ├── Need balance ──────────► <span class="leaf">F1 score</span>
+│       └── Rank quality ──────────► <span class="leaf">ROC-AUC / PR-AUC</span>
+│
+└── <span class="branch">Regression</span>
+    ├── Penalise big errors ───────► <span class="leaf">RMSE</span>
+    ├── Robust to outliers ────────► <span class="leaf">MAE</span>
+    └── % error / forecasting ─────► <span class="leaf">MAPE</span></pre></div>
+<table class="ref">
+<tr><th>Metric</th><th class="use">Use when</th><th class="avoid">Avoid when</th></tr>
+<tr><td>Accuracy</td><td class="use">Classes are balanced</td><td class="avoid">Imbalanced (99% one class)</td></tr>
+<tr><td>Recall</td><td class="use">Missing a positive is costly (cancer, fraud)</td><td class="avoid">False alarms are very expensive</td></tr>
+<tr><td>Precision</td><td class="use">False alarms are costly (spam block)</td><td class="avoid">Missing positives is dangerous</td></tr>
+<tr><td>F1 / ROC-AUC</td><td class="use">Imbalanced, need overall quality</td><td class="avoid">Stakeholder needs a simple % story</td></tr>
+<tr><td>RMSE</td><td class="use">Large errors must be punished</td><td class="avoid">Many legitimate outliers</td></tr>
+<tr><td>MAE</td><td class="use">Robust, interpretable error</td><td class="avoid">Big errors must dominate</td></tr>
+</table>
+<div class="tip">Pick the metric <strong>before</strong> training. The metric encodes the business cost of being wrong — choosing it after seeing results is how teams fool themselves.</div>
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes"><li>Filling skewed numeric columns with the mean instead of the median</li><li>Deleting real outliers that are actually the signal you need</li><li>Choosing the evaluation metric after seeing the results</li></ul><div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid"><div class="cheat-item"><code>SimpleImputer(strategy='median')</code> -> Robust numeric imputation</div><div class="cheat-item"><code>OneHotEncoder(handle_unknown="ignore")</code> -> Safe nominal encoding</div><div class="cheat-item"><code>RobustScaler()</code> -> Scale data that has outliers</div><div class="cheat-item"><code>mutual_info_classif()</code> -> Rank feature relevance (non-linear)</div><div class="cheat-item"><code>roc_auc_score()</code> -> Metric for imbalanced classes</div></div>
+<nav class="nav-footer"><a class="nav-btn" href="14-project-documentation-pack.html">&#8592; Previous</a><a class="nav-btn primary" href="16-statistical-test-selection-guide.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

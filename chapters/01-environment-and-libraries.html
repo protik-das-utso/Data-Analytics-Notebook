@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Environment & Libraries — Data Analytics Notebook</title>
+<meta name="description" content="Install and import all essential Python libraries for data analytics. Copy this template at the start of every project.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/01-environment-and-libraries.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Environment &amp; Libraries — Data Analytics Notebook">
+<meta property="og:description" content="Install and import all essential Python libraries for data analytics. Copy this template at the start of every project.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/01-environment-and-libraries.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Environment &amp; Libraries — Data Analytics Notebook">
+<meta name="twitter:title" content="Environment &amp; Libraries — Data Analytics Notebook">
+<meta name="twitter:description" content="Install and import all essential Python libraries for data analytics. Copy this template at the start of every project.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Environment & Libraries",
+  "description": "Install and import all essential Python libraries for data analytics. Copy this template at the start of every project.",
+  "url": "https://danotebook.protik.dev/chapters/01-environment-and-libraries.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Foundations"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Foundations"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Environment & Libraries",
+    "item": "https://danotebook.protik.dev/chapters/01-environment-and-libraries.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="01-environment-and-libraries.html" data-num="1">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 01 — Setup</div>
+<h1 class="ch-title">Environment & Libraries</h1>
+<p class="ch-desc">Install and import all essential Python libraries for data analytics. Copy this template at the start of every project.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+<div class="front-hero">
+<h3>Clear Start for Every Analysis Project</h3>
+<p>This notebook is your step-by-step system. Start with context, inspect data quality, then clean, analyze, validate, and report. Follow the same order every time for reliable results.</p>
+<div class="front-badges">
+<span class="front-badge">Beginner friendly</span>
+<span class="front-badge">End-to-end workflow</span>
+<span class="front-badge">Reusable template</span>
+</div>
+</div>
+<div class="xforge"><span class="xf-tag">DataXForge</span>Prefer no-code? Every stage in this handbook also has a free in-browser tool. Start with <a href="https://dataxforge.com/tools/universal-data-lab" target="_blank" rel="noopener">Universal Data Lab</a> — drop any CSV/JSON/Excel file to auto-detect, profile, clean, visualize, and export. 100% client-side, nothing is uploaded.</div>
+<div class="section-title">1.0 Quick start in 2 minutes</div>
+<div class="quick-grid">
+<div class="quick-card"><h4>Step A</h4><p>Write the business question in one sentence and define the KPI.</p></div>
+<div class="quick-card"><h4>Step B</h4><p>Load data and run shape, info, null, and duplicate checks first.</p></div>
+<div class="quick-card"><h4>Step C</h4><p>Use the scenario guide below to choose the right method quickly.</p></div>
+<div class="quick-card"><h4>Step D</h4><p>Finish with clear findings, limitations, and next actions.</p></div>
+</div>
+<div class="section-title">1.1 How to use this notebook</div>
+<div class="note"><strong>Use this notebook as a repeatable analysis process.</strong> For every dataset, move in the same order: define the question, understand the source, inspect the raw data, clean carefully, explore patterns, test ideas, and report the result clearly. Do not jump to charts or modeling before you know what the data contains.</div>
+<div class="section-title">1.2 Analysis workflow</div>
+<ol class="workflow">
+<li><strong>Define the question</strong><span>Write down the exact problem you want to solve, the decision it supports, and the key metric you care about.</span></li>
+<li><strong>Understand the dataset</strong><span>Check where the data came from, what each row represents, the date range, the unit of measure, and the main column meanings.</span></li>
+<li><strong>Inspect the raw data</strong><span>Look at shape, columns, dtypes, missing values, duplicates, and unusual values before making changes.</span></li>
+<li><strong>Protect the original data</strong><span>Create a raw backup and work on a copy so you can always compare your cleaned version with the source.</span></li>
+<li><strong>Clean with intention</strong><span>Fix types, standardize text, handle missing values, remove duplicates, and decide how outliers should be treated.</span></li>
+<li><strong>Explore patterns</strong><span>Use descriptive statistics, grouped summaries, and visualizations to understand trends, segments, and relationships.</span></li>
+<li><strong>Validate findings</strong><span>Ask whether the results make sense, check edge cases, and confirm important conclusions with more than one method.</span></li>
+<li><strong>Summarize the story</strong><span>Finish with clear insights, limitations, next steps, and the business recommendation that follows from the data.</span></li>
+</ol>
+<div class="section-title">1.3 Scenario guide</div>
+<table class="ref">
+<tr><th>Scenario</th><th>Use this</th><th>Why</th></tr>
+<tr><td>You are seeing the dataset for the first time</td><td><code>df.shape</code>, <code>df.head()</code>, <code>df.info()</code>, <code>df.isnull().sum()</code></td><td>These tell you what the data looks like, what types exist, and whether the data needs cleaning before analysis.</td></tr>
+<tr><td>The data has missing values</td><td>Mean for balanced numeric data, median for skewed numeric data, mode or <code>Unknown</code> for categories</td><td>Different fill methods work better depending on the shape and meaning of the column.</td></tr>
+<tr><td>You want to compare groups</td><td>Bar chart, boxplot, t-test, or ANOVA</td><td>These help you compare values across departments, regions, age groups, or categories.</td></tr>
+<tr><td>You want to study trend over time</td><td>Line chart, rolling average, date features like month or weekday</td><td>Time-based data is easier to understand when you keep the order and show movement across dates.</td></tr>
+<tr><td>The data is skewed or has outliers</td><td>Median, IQR clipping, log transform</td><td>These reduce the effect of extreme values and give a more stable summary.</td></tr>
+<tr><td>You want to combine multiple files</td><td><code>pd.merge()</code> for related tables, <code>pd.concat()</code> for stacking similar tables</td><td>Merge is for matching keys; concat is for adding more rows of the same structure.</td></tr>
+<tr><td>You need a dashboard or report</td><td>Pivot table, groupby summary, export to Excel/CSV, clear chart labels</td><td>Stakeholders need summarized and readable outputs, not raw row-level data.</td></tr>
+<tr><td>You want to predict a category</td><td>Logistic Regression, Random Forest Classifier, F1 score, ROC-AUC</td><td>Use classification methods when the target is a label like yes/no or churn/not churn.</td></tr>
+<tr><td>You want to predict a number</td><td>Linear Regression, Random Forest Regressor, MAE, RMSE</td><td>Use regression when the target is continuous, such as revenue, price, or demand.</td></tr>
+</table>
+<div class="section-title">1.4 What to write before analysis</div>
+<div class="tip">Record the source, the date you received the file, the expected grain of the data, the target variable, and the most important columns. Also write the business goal in one sentence. This gives you a clear reference when you later explain why you cleaned, grouped, filtered, or modeled the data in a certain way.</div>
+<div class="section-title">1.5 When to use common statistics</div>
+<table class="ref">
+<tr><th>Statistic</th><th>When to use</th><th>Why use it</th><th>When to skip</th></tr>
+<tr><td>Mean</td><td>Data is fairly symmetric and has no extreme outliers</td><td>Shows the average value clearly</td><td>Skip for skewed data, salary, income, house prices, or data with big outliers</td></tr>
+<tr><td>Median</td><td>Data is skewed or contains outliers</td><td>Gives the middle value and is resistant to extreme values</td><td>Skip only if you need a pure arithmetic average for a balanced distribution</td></tr>
+<tr><td>Mode</td><td>Need the most common category or value</td><td>Helps with categorical data and repeated values</td><td>Skip when every value is almost unique or the category has too many levels</td></tr>
+<tr><td>Standard deviation</td><td>You want to measure spread around the mean</td><td>Shows how consistent or variable the data is</td><td>Skip if the mean is not a meaningful center because the distribution is heavily skewed</td></tr>
+<tr><td>Percentiles / quantiles</td><td>You want thresholds, ranks, or segment cutoffs</td><td>Useful for top 10%, quartiles, and outlier boundaries</td><td>Skip if you only need a simple summary and not a split of the data</td></tr>
+<tr><td>Correlation</td><td>You want to check whether two numeric variables move together</td><td>Quick way to identify related variables</td><td>Skip for causal claims, categorical-only data, or non-linear relationships without more testing</td></tr>
+<tr><td>T-test / ANOVA</td><td>You want to compare group means</td><td>Tests whether differences are likely real or due to chance</td><td>Skip if the data is not numeric, groups are too small, or assumptions are badly violated</td></tr>
+<tr><td>Chi-square</td><td>You want to test association between categorical variables</td><td>Checks whether categories are independent</td><td>Skip for continuous numeric variables</td></tr>
+</table>
+<div class="section-title">1.6 Install libraries</div>
+<div class="note">Run these once in your terminal or first Jupyter cell.</div>
+<div class="code-block"><div class="code-label">terminal</div><pre>pip install pandas numpy matplotlib seaborn scipy scikit-learn plotly openpyxl</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">1.7 Standard imports — copy every project</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># === CORE ===</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># === VISUALIZATION ===</span>
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+<span class="kw">import</span> plotly.express <span class="kw">as</span> px
+
+<span class="cm"># === STATISTICS ===</span>
+<span class="kw">from</span> scipy <span class="kw">import</span> stats
+
+<span class="cm"># === MACHINE LEARNING ===</span>
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split, cross_val_score
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, MinMaxScaler, LabelEncoder
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, classification_report
+
+<span class="cm"># === DISPLAY SETTINGS ===</span>
+pd.set_option(<span class="st">'display.max_columns'</span>, None)
+pd.set_option(<span class="st">'display.max_rows'</span>, 100)
+pd.set_option(<span class="st">'display.float_format'</span>, <span class="kw">lambda</span> x: <span class="st">'%.3f'</span> % x)
+sns.set_theme(style=<span class="st">"whitegrid"</span>)
+%matplotlib inline</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">1.8 Project folder structure</div>
+<div class="code-block"><div class="code-label">recommended layout</div><pre>my_project/
+├── data/
+│   ├── raw/          <span class="cm"># original files — never modify!</span>
+│   ├── processed/    <span class="cm"># cleaned data</span>
+│   └── output/       <span class="cm"># results, exports</span>
+├── notebooks/        <span class="cm"># your .ipynb files</span>
+├── reports/          <span class="cm"># charts, PDFs</span>
+└── README.md</pre></div>
+<div class="tip">Always keep the raw data untouched. Work on copies only. Rule: never overwrite raw data.</div>
+<div class="section-title">Project Execution Template</div>
+<div class="note"><strong>Use this template before you start every project.</strong> It keeps analysis focused and interview-ready.</div>
+<table class="ref">
+<tr><th>Field</th><th>Your note</th></tr>
+<tr><td>Problem statement</td><td>What business issue are you solving?</td></tr>
+<tr><td>Dataset</td><td>Name, source, timeframe, granularity</td></tr>
+<tr><td>Objective</td><td>What decision should this analysis support?</td></tr>
+<tr><td>KPI / metric</td><td>Primary success measure</td></tr>
+<tr><td>Hypothesis</td><td>What do you expect and why?</td></tr>
+</table>
+<ul class="steps">
+<li>Business question clearly defined</li>
+<li>Stakeholder identified</li>
+<li>Expected output decided (dashboard / report / model)</li>
+</ul>
+<div class="tip">Why this helps: it makes your notebook reusable for portfolio and job interviews, not just one-off analysis.</div><div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes"><li>Skipping business context before running technical steps</li><li>Not writing assumptions and limitations explicitly</li><li>Treating one metric as the full story</li></ul><div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid"><div class="cheat-item"><code>df.info()</code> -> Structure and non-null counts</div><div class="cheat-item"><code>df.describe()</code> -> Numeric summary statistics</div><div class="cheat-item"><code>df.isnull().sum()</code> -> Missing-value counts by column</div><div class="cheat-item"><code>df.groupby()</code> -> Segmented aggregation</div><div class="cheat-item"><code>pd.merge()</code> -> Join multiple datasets</div></div>
+<nav class="nav-footer"><span></span><a class="nav-btn primary" href="02-data-loading.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

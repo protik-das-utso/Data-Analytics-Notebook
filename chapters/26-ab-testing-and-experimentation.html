@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A/B Testing &amp; Experimentation — Data Analytics Notebook</title>
+<meta name="description" content="Design experiments that give trustworthy answers: hypotheses, power and sample size, running the test, reading results, and the traps that produce false wins.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/26-ab-testing-and-experimentation.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A/B Testing &amp; Experimentation — Data Analytics Notebook">
+<meta property="og:description" content="Design experiments that give trustworthy answers: hypotheses, power and sample size, running the test, reading results, and the traps that produce false wins.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/26-ab-testing-and-experimentation.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A/B Testing &amp; Experimentation — Data Analytics Notebook">
+<meta name="twitter:title" content="A/B Testing &amp; Experimentation — Data Analytics Notebook">
+<meta name="twitter:description" content="Design experiments that give trustworthy answers: hypotheses, power and sample size, running the test, reading results, and the traps that produce false wins.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "A/B Testing & Experimentation",
+  "description": "Design experiments that give trustworthy answers: hypotheses, power and sample size, running the test, reading results, and the traps that produce false wins.",
+  "url": "https://danotebook.protik.dev/chapters/26-ab-testing-and-experimentation.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Statistics & Experimentation"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Statistics & Experimentation"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "A/B Testing & Experimentation",
+    "item": "https://danotebook.protik.dev/chapters/26-ab-testing-and-experimentation.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="26-ab-testing-and-experimentation.html" data-num="26">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 26 — Experimentation</div>
+<h1 class="ch-title">A/B Testing & Experimentation</h1>
+<p class="ch-desc">Design experiments that give trustworthy answers: hypotheses, power and sample size, running the test, reading results, and the traps that produce false wins.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+
+<div class="note">A/B testing is how product and growth decisions are actually made. The hard part isn't the math — it's <strong>designing the test so the result means something</strong>.</div>
+
+<div class="section-title">26.1 The experiment lifecycle</div>
+<ul class="pipeline"><li>Hypothesis</li><li>Pick metric</li><li>Power &amp; sample size</li><li>Randomize</li><li>Run (fixed horizon)</li><li>Analyze</li><li>Decide</li></ul>
+
+<div class="section-title">26.2 A good hypothesis</div>
+<div class="gb-grid">
+<div class="gb-card gb-bad"><h5>Weak</h5>"Let's make the button green and see what happens." No metric, no expected effect, no decision rule.</div>
+<div class="gb-card gb-good"><h5>Strong</h5>"Changing the CTA to green will increase signup conversion. We'll ship if it lifts conversion by &ge;2% (primary metric) with p&lt;0.05."</div>
+</div>
+
+<div class="section-title">26.3 Power & sample size — decide n BEFORE running</div>
+<p>Four quantities are linked: effect size, sample size, significance (&alpha;), and power. Fix three, solve the fourth. Underpowered tests waste traffic and miss real effects.</p>
+<div class="dtree"><div class="dtree-label">drivers of required sample size</div><pre>Bigger n needed when...
+│
+├── smaller effect you want to detect (MDE ↓ ⇒ n ↑↑)
+├── higher confidence (lower &alpha;)
+├── higher power (e.g. 80% → 90%)
+└── higher metric variance</pre></div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Sample size per arm for a proportion test</span>
+from statsmodels.stats.power import NormalIndPower
+from statsmodels.stats.proportion import proportion_effectsize
+
+baseline, target = <span class="num">0.10</span>, <span class="num">0.12</span>          <span class="cm"># 10% -> 12% (MDE = 2pp)</span>
+es = proportion_effectsize(target, baseline)
+n = NormalIndPower().solve_power(effect_size=es, alpha=<span class="num">0.05</span>, power=<span class="num">0.8</span>, alternative=<span class="st">'two-sided'</span>)
+print(<span class="st">f"need ~{n:.0f} users per arm"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+
+<div class="section-title">26.4 Analyzing the result</div>
+<table class="ref">
+<tr><th>Metric type</th><th>Test</th><th>Report</th></tr>
+<tr><td>Conversion (yes/no)</td><td>Two-proportion z-test / chi-square</td><td>Lift + 95% CI on the difference</td></tr>
+<tr><td>Continuous (revenue, time)</td><td>Welch's t-test (or Mann-Whitney if skewed)</td><td>Mean diff + CI</td></tr>
+<tr><td>Skewed revenue</td><td>Bootstrap / trimmed mean</td><td>CI on the difference</td></tr>
+</table>
+<div class="code-block"><div class="code-label">python</div><pre>from statsmodels.stats.proportion import proportions_ztest
+import numpy as np
+conv = np.array([<span class="num">1180</span>, <span class="num">1310</span>])     <span class="cm"># conversions A, B</span>
+n    = np.array([<span class="num">10000</span>, <span class="num">10000</span>])    <span class="cm"># users A, B</span>
+stat, p = proportions_ztest(conv, n)
+print(<span class="st">f"lift={ (conv[1]/n[1]-conv[0]/n[0])*100:.2f }pp  p={p:.4f}"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+
+<div class="section-title">26.5 Traps that manufacture false wins</div>
+<div class="gb-grid">
+<div class="gb-card gb-bad"><h5>Peeking</h5>Checking daily and stopping when p&lt;0.05. Inflates false positives massively.</div>
+<div class="gb-card gb-good"><h5>Fix</h5>Pre-commit to a sample size / end date, or use sequential / Bayesian methods built for early stopping.</div>
+</div>
+<div class="gb-grid">
+<div class="gb-card gb-bad"><h5>Multiple metrics</h5>Testing 20 metrics, celebrating the one that's significant.</div>
+<div class="gb-card gb-good"><h5>Fix</h5>One primary metric. Correct for multiple comparisons (Bonferroni / FDR) on the rest.</div>
+</div>
+<table class="ref">
+<tr><th>Trap</th><th>Symptom</th><th class="use">Prevention</th></tr>
+<tr><td>Peeking</td><td>Stopped early on a lucky day</td><td class="use">Fixed horizon or sequential test</td></tr>
+<tr><td>Sample ratio mismatch</td><td>Split isn't 50/50</td><td class="use">Chi-square SRM check before analysis</td></tr>
+<tr><td>Novelty effect</td><td>Early lift fades</td><td class="use">Run a full business cycle (&ge;1–2 weeks)</td></tr>
+<tr><td>Simpson's paradox</td><td>Overall &ne; per-segment</td><td class="use">Check key segments separately</td></tr>
+</table>
+
+<div class="rec-box"><h4>Professional recommendation</h4><div class="rec-grid">
+<div class="rec-item"><span class="rk">Before</span><span class="rv">Fix metric, MDE, n, duration</span></div>
+<div class="rec-item"><span class="rk">During</span><span class="rv">Don't peek; check SRM</span></div>
+<div class="rec-item"><span class="rk">Variance</span><span class="rv">CUPED to detect smaller effects</span></div>
+<div class="rec-item"><span class="rk">After</span><span class="rv">Lift + CI, then decide</span></div>
+</div></div>
+
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes">
+<li>Peeking at results and stopping when it looks significant</li>
+<li>Not computing sample size — running underpowered tests</li>
+<li>Cherry-picking the one metric (of many) that won</li>
+<li>Ending the test before a full weekly cycle (novelty/day-of-week effects)</li>
+<li>Ignoring a sample ratio mismatch that signals a broken split</li>
+</ul>
+<div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid">
+<div class="cheat-item"><code>solve_power(effect_size, alpha, power)</code> -> required n</div>
+<div class="cheat-item"><code>proportions_ztest()</code> -> conversion test</div>
+<div class="cheat-item"><code>ttest_ind(equal_var=False)</code> -> Welch's t-test</div>
+<div class="cheat-item"><code>SRM chi-square</code> -> validate the split</div>
+<div class="cheat-item"><code>CUPED</code> -> cut variance using pre-period data</div>
+</div>
+<nav class="nav-footer"><a class="nav-btn" href="25-data-engineering-and-pipelines.html">&#8592; Previous</a><a class="nav-btn primary" href="27-causal-inference.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

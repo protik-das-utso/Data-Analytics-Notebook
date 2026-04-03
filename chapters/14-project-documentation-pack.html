@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Documentation Pack — Data Analytics Notebook</title>
+<meta name="description" content="Ready-to-use templates and standards for README, data dictionary, validation log, and handover notes.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/14-project-documentation-pack.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Project Documentation Pack — Data Analytics Notebook">
+<meta property="og:description" content="Ready-to-use templates and standards for README, data dictionary, validation log, and handover notes.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/14-project-documentation-pack.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Project Documentation Pack — Data Analytics Notebook">
+<meta name="twitter:title" content="Project Documentation Pack — Data Analytics Notebook">
+<meta name="twitter:description" content="Ready-to-use templates and standards for README, data dictionary, validation log, and handover notes.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Project Documentation Pack",
+  "description": "Ready-to-use templates and standards for README, data dictionary, validation log, and handover notes.",
+  "url": "https://danotebook.protik.dev/chapters/14-project-documentation-pack.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Delivery"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Delivery"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Project Documentation Pack",
+    "item": "https://danotebook.protik.dev/chapters/14-project-documentation-pack.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="14-project-documentation-pack.html" data-num="14">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 14 — Documentation</div>
+<h1 class="ch-title">Project Documentation Pack</h1>
+<p class="ch-desc">Ready-to-use templates and standards for README, data dictionary, validation log, and handover notes.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+<div class="section-title">14.0 Why this chapter matters</div>
+<div class="note"><strong>Good analysis without documentation is hard to trust and hard to reuse.</strong> Use this chapter as your final quality gate before sharing a notebook, dashboard, or model output.</div>
+<div class="xforge"><span class="xf-tag">DataXForge</span>Auto-generate docs: <a href="https://dataxforge.com/tools/data-dictionary-generator" target="_blank" rel="noopener">Data Dictionary Generator</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/metadata-extractor" target="_blank" rel="noopener">Metadata Extractor</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/auto-schema-detector" target="_blank" rel="noopener">Auto Schema Detector</a>.</div>
+<div class="section-title">14.1 Required documentation set</div>
+<table class="ref">
+<tr><th>Document</th><th>Minimum content</th><th>Owner</th><th>Update frequency</th></tr>
+<tr><td>README</td><td>Business goal, data source, setup steps, outputs, limitations</td><td>Analyst</td><td>Every major update</td></tr>
+<tr><td>Data dictionary</td><td>Column name, meaning, type, units, allowed values, null policy</td><td>Analyst + data owner</td><td>When schema changes</td></tr>
+<tr><td>Cleaning log</td><td>What changed, why changed, impact on row count/metrics</td><td>Analyst</td><td>Every cleaning operation</td></tr>
+<tr><td>Validation log</td><td>Checks run, pass/fail result, unresolved issues</td><td>Analyst / reviewer</td><td>Before reporting</td></tr>
+<tr><td>Handover note</td><td>How to rerun analysis, dependencies, known risks, next steps</td><td>Project owner</td><td>At delivery</td></tr>
+</table>
+<div class="section-title">14.2 Validation checklist before publish</div>
+<ul class="steps">
+<li>Business question and target KPI are written in one sentence</li>
+<li>Data source and extraction date are documented</li>
+<li>All filters/cleaning rules are explained</li>
+<li>Key assumptions are stated and justified</li>
+<li>At least one limitation and one risk are reported</li>
+<li>Charts include units, time range, and interpretation note</li>
+<li>Result files are reproducible from the notebook/script</li>
+<li>Privacy-sensitive columns are masked or removed</li>
+</ul>
+<div class="section-title">14.3 Markdown starter templates</div>
+<div class="code-block"><div class="code-label">README.md skeleton</div><pre># Project Title
+
+## Business Question
+- What decision this analysis supports
+
+## Data Source
+- File/table name
+- Date range
+- Row granularity
+
+## Method Overview
+1. Data loading
+2. EDA
+3. Cleaning and transformation
+4. Analysis/modeling
+5. Reporting
+
+## Key Findings
+- Insight 1
+- Insight 2
+
+## Limitations
+- Limitation 1
+
+## Repro Steps
+- Install dependencies
+- Run notebook/script order
+</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="code-block"><div class="code-label">Data dictionary skeleton</div><pre>| column_name | description | dtype | unit | allowed_values | null_policy |
+|---|---|---|---|---|---|
+| customer_id | unique customer key | string | n/a | unique | never null |
+| order_date | transaction date | datetime | yyyy-mm-dd | valid dates | drop if null |
+| revenue | order revenue | float | USD | >= 0 | fill 0 if missing |
+</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="tip">Use the sidebar template tools to copy or save these documents quickly for every new project.</div>
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes"><li>Skipping business context before running technical steps</li><li>Not writing assumptions and limitations explicitly</li><li>Treating one metric as the full story</li></ul><div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid"><div class="cheat-item"><code>df.info()</code> -> Structure and non-null counts</div><div class="cheat-item"><code>df.describe()</code> -> Numeric summary statistics</div><div class="cheat-item"><code>df.isnull().sum()</code> -> Missing-value counts by column</div><div class="cheat-item"><code>df.groupby()</code> -> Segmented aggregation</div><div class="cheat-item"><code>pd.merge()</code> -> Join multiple datasets</div></div>
+<nav class="nav-footer"><a class="nav-btn" href="13-portfolio-and-career-execution.html">&#8592; Previous</a><a class="nav-btn primary" href="15-data-analytics-decision-matrix.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Science Troubleshooting Guide — Data Analytics Notebook</title>
+<meta name="description" content="When something breaks or looks wrong, find the symptom here. Each entry gives the likely cause and the concrete fix — for errors, modeling problems, and silent data issues.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/19-data-science-troubleshooting-guide.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Data Science Troubleshooting Guide — Data Analytics Notebook">
+<meta property="og:description" content="When something breaks or looks wrong, find the symptom here. Each entry gives the likely cause and the concrete fix — for errors, modeling problems, and silent data issues.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/19-data-science-troubleshooting-guide.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Data Science Troubleshooting Guide — Data Analytics Notebook">
+<meta name="twitter:title" content="Data Science Troubleshooting Guide — Data Analytics Notebook">
+<meta name="twitter:description" content="When something breaks or looks wrong, find the symptom here. Each entry gives the likely cause and the concrete fix — for errors, modeling problems, and silent data issues.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Data Science Troubleshooting Guide",
+  "description": "When something breaks or looks wrong, find the symptom here. Each entry gives the likely cause and the concrete fix — for errors, modeling problems, and silent data issues.",
+  "url": "https://danotebook.protik.dev/chapters/19-data-science-troubleshooting-guide.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Decision Guides"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Decision Guides"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Data Science Troubleshooting Guide",
+    "item": "https://danotebook.protik.dev/chapters/19-data-science-troubleshooting-guide.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="19-data-science-troubleshooting-guide.html" data-num="19">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 19 — Troubleshooting</div>
+<h1 class="ch-title">Data Science Troubleshooting Guide</h1>
+<p class="ch-desc">When something breaks or looks wrong, find the symptom here. Each entry gives the likely cause and the concrete fix — for errors, modeling problems, and silent data issues.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+<div class="note">Search this chapter (sidebar search) for an error message or symptom. Format is always <strong>Symptom → Cause → Fix</strong>.</div>
+<div class="section-title">19.1 Common error messages</div>
+<table class="ref">
+<tr><th>Error</th><th>Cause</th><th>Fix</th></tr>
+<tr><td><code>could not convert string to float</code></td><td>Text values in a numeric column (e.g. "N/A", "$1,200")</td><td><code>pd.to_numeric(col, errors='coerce')</code> then impute</td></tr>
+<tr><td><code>SettingWithCopyWarning</code></td><td>Chained indexing on a slice</td><td>Use <code>.loc[rows, col] = value</code> or <code>.copy()</code></td></tr>
+<tr><td><code>ValueError: input contains NaN</code></td><td>Model received missing values</td><td>Impute before <code>.fit()</code>; check after merges</td></tr>
+<tr><td><code>shapes not aligned</code> / dimension mismatch</td><td>Train and predict feature columns differ</td><td>Align columns; fit encoder on train, reuse on test</td></tr>
+<tr><td><code>MemoryError</code> on load</td><td>Dataset too large for RAM</td><td><code>dtype</code> downcast, <code>usecols</code>, <code>chunksize</code>, or Polars/Dask</td></tr>
+<tr><td><code>ConvergenceWarning</code> (LogReg)</td><td>Unscaled features or too few iterations</td><td>Scale features; raise <code>max_iter</code></td></tr>
+<tr><td><code>Found unknown categories</code> (OneHot)</td><td>Test set has a category not seen in train</td><td><code>OneHotEncoder(handle_unknown='ignore')</code></td></tr>
+<tr><td><code>KeyError: 'column'</code></td><td>Renamed/whitespace column name</td><td><code>df.columns.str.strip()</code>; check <code>df.columns</code></td></tr>
+</table>
+<div class="xforge"><span class="xf-tag">DataXForge</span>Fix broken input fast: <a href="https://dataxforge.com/tools/fix-broken-json" target="_blank" rel="noopener">Fix Broken JSON</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/auto-detect-corrupted-rows" target="_blank" rel="noopener">Detect Corrupted Rows</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/invalid-row-detector" target="_blank" rel="noopener">Invalid Row Detector</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/data-type-detector" target="_blank" rel="noopener">Data Type Detector</a>.</div>
+<div class="section-title">19.2 Overfitting</div>
+<div class="gb-grid">
+<div class="gb-card gb-bad"><h5>Symptom</h5>Train accuracy = 99%, Test accuracy = 62%. The model memorised the training data and fails on new data.</div>
+<div class="gb-card gb-good"><h5>Fix</h5>Cross-validation · regularization (L1/L2, max_depth) · fewer features · more data · early stopping · simpler model.</div>
+</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Detect the gap with cross-validation, not a single split</span>
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(model, X_train, y_train, cv=<span class="num">5</span>, scoring=<span class="st">'roc_auc'</span>)
+print(<span class="st">f"CV AUC: {scores.mean():.3f} ± {scores.std():.3f}"</span>)
+<span class="cm"># Big train-vs-CV gap = overfitting. Add regularization / reduce complexity.</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">19.3 Underfitting</div>
+<div class="gb-grid">
+<div class="gb-card gb-bad"><h5>Symptom</h5>Train and test scores are both low. The model is too simple to capture the pattern.</div>
+<div class="gb-card gb-good"><h5>Fix</h5>More/better features · less regularization · a more powerful model · train longer · reduce feature noise.</div>
+</div>
+<div class="section-title">19.4 Silent data problems (no error, wrong answer)</div>
+<table class="ref">
+<tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+<tr><td>Test score suspiciously perfect (≈1.0)</td><td>Data leakage — target info in features</td><td>Audit features; see Chapter 20</td></tr>
+<tr><td>Row count grew after a merge</td><td>Many-to-many join on a non-unique key</td><td>Check key uniqueness; <code>validate='1:1'</code></td></tr>
+<tr><td>Aggregates double the expected total</td><td>Duplicate rows</td><td><code>df.duplicated().sum()</code> then drop</td></tr>
+<tr><td>Model predicts one class only</td><td>Severe imbalance / wrong threshold</td><td>Class weights, resampling, tune threshold</td></tr>
+<tr><td>Great offline, poor in production</td><td>Train/serve skew or drift</td><td>Match preprocessing; monitor drift (Ch 21)</td></tr>
+<tr><td>Feature importance dominated by an ID</td><td>Leaky identifier learned by the model</td><td>Drop IDs from features</td></tr>
+</table>
+<div class="section-title">19.5 Performance & scaling</div>
+<table class="ref">
+<tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+<tr><td>Pandas operation very slow</td><td>Row-wise <code>apply</code> / Python loops</td><td>Vectorize; use built-in pandas/numpy ops</td></tr>
+<tr><td>Notebook RAM keeps growing</td><td>Copies of large frames kept alive</td><td><code>del</code> + downcast dtypes; process in chunks</td></tr>
+<tr><td>Training takes hours</td><td>Too many estimators / unscaled SVM/KNN</td><td>LightGBM, subsample, fewer trees, GPU</td></tr>
+</table>
+<div class="tip">When stuck: isolate the problem on a <strong>small sample</strong>, print shapes and dtypes at each step, and verify one row by hand. Most "model" bugs are actually data bugs.</div>
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes"><li>Skipping business context before running technical steps</li><li>Not writing assumptions and limitations explicitly</li><li>Treating one metric as the full story</li></ul><div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid"><div class="cheat-item"><code>df.info()</code> -> Structure and non-null counts</div><div class="cheat-item"><code>df.describe()</code> -> Numeric summary statistics</div><div class="cheat-item"><code>df.isnull().sum()</code> -> Missing-value counts by column</div><div class="cheat-item"><code>df.groupby()</code> -> Segmented aggregation</div><div class="cheat-item"><code>pd.merge()</code> -> Join multiple datasets</div></div>
+<nav class="nav-footer"><a class="nav-btn" href="18-real-industry-case-studies.html">&#8592; Previous</a><a class="nav-btn primary" href="20-data-leakage-prevention-guide.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

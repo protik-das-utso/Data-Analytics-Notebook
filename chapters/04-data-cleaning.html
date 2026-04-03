@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Cleaning — Data Analytics Notebook</title>
+<meta name="description" content="Handle missing values, duplicates, outliers, incorrect types, and messy strings. This is often 60–70% of the work.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/04-data-cleaning.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Data Cleaning — Data Analytics Notebook">
+<meta property="og:description" content="Handle missing values, duplicates, outliers, incorrect types, and messy strings. This is often 60–70% of the work.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/04-data-cleaning.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Data Cleaning — Data Analytics Notebook">
+<meta name="twitter:title" content="Data Cleaning — Data Analytics Notebook">
+<meta name="twitter:description" content="Handle missing values, duplicates, outliers, incorrect types, and messy strings. This is often 60–70% of the work.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Data Cleaning",
+  "description": "Handle missing values, duplicates, outliers, incorrect types, and messy strings. This is often 60–70% of the work.",
+  "url": "https://danotebook.protik.dev/chapters/04-data-cleaning.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Core Workflow"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Core Workflow"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Data Cleaning",
+    "item": "https://danotebook.protik.dev/chapters/04-data-cleaning.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="04-data-cleaning.html" data-num="4">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 04 — Cleaning</div>
+<h1 class="ch-title">Data Cleaning</h1>
+<p class="ch-desc">Handle missing values, duplicates, outliers, incorrect types, and messy strings. This is often 60–70% of the work.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+<div class="warn">Always backup first: <code>df_raw = df.copy()</code> — run this before any cleaning!</div>
+<div class="section-title">4.0 Cleaning decision guide</div>
+<table class="ref">
+<tr><th>Cleaning method</th><th>Use when</th><th>Why use it</th><th>Skip when</th></tr>
+<tr><td>Drop rows</td><td>Only a small number of rows are missing or invalid</td><td>Fast and simple when data loss is tiny</td><td>Skip when missingness is large, random, or concentrated in important columns</td></tr>
+<tr><td>Fill with mean</td><td>Numeric data is roughly symmetric and outliers are not severe</td><td>Keeps the overall average stable</td><td>Skip for skewed numeric columns like income, prices, or counts with strong outliers</td></tr>
+<tr><td>Fill with median</td><td>Numeric data is skewed or has outliers</td><td>More robust than mean for messy real-world values</td><td>Skip only when exact average behavior is required</td></tr>
+<tr><td>Fill with mode / "Unknown"</td><td>Categorical data has missing values</td><td>Preserves the category structure</td><td>Skip when missingness itself is meaningful and should be analyzed separately</td></tr>
+<tr><td>Forward fill / backward fill</td><td>Time series or ordered records</td><td>Uses nearby values where continuity is expected</td><td>Skip for unrelated rows, shuffled data, or data without a natural order</td></tr>
+<tr><td>Drop duplicates</td><td>Duplicate rows are accidental copies</td><td>Prevents double counting</td><td>Skip when repeated rows are valid events, transactions, or measurements</td></tr>
+<tr><td>IQR clipping</td><td>You want to reduce the impact of extreme numeric outliers</td><td>Protects analysis from extreme values without removing rows</td><td>Skip when extreme values are real business events that must stay visible</td></tr>
+<tr><td>Z-score filtering</td><td>Data is close to normal and you need a statistical outlier rule</td><td>Good for controlled numeric data</td><td>Skip for strongly skewed data or small samples where Z-scores are unstable</td></tr>
+<tr><td>String standardization</td><td>Text values have spaces, case differences, or symbols</td><td>Makes categories consistent</td><td>Skip only if the original text format must be preserved exactly</td></tr>
+</table>
+<div class="xforge"><span class="xf-tag">DataXForge</span>Clean without code: <a href="https://dataxforge.com/tools/csv-cleaner" target="_blank" rel="noopener">CSV Cleaner</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/missing-value-cleaner" target="_blank" rel="noopener">Missing Value Cleaner</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/remove-duplicate-rows" target="_blank" rel="noopener">Remove Duplicate Rows</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/outlier-detector" target="_blank" rel="noopener">Outlier Detector</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/data-standardizer" target="_blank" rel="noopener">Data Standardizer</a>.</div>
+<div class="section-title">4.1 Handle missing values</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Drop rows where ALL values are missing</span>
+df.dropna(how=<span class="st">'all'</span>, inplace=True)
+
+<span class="cm"># Drop rows if KEY columns are missing</span>
+df.dropna(subset=[<span class="st">'id'</span>, <span class="st">'date'</span>], inplace=True)
+
+<span class="cm"># Fill with a constant value</span>
+df[<span class="st">'col'</span>].fillna(0, inplace=True)
+df[<span class="st">'category'</span>].fillna(<span class="st">'Unknown'</span>, inplace=True)
+
+<span class="cm"># Fill numeric with mean or median</span>
+df[<span class="st">'age'</span>].fillna(df[<span class="st">'age'</span>].mean(), inplace=True)
+df[<span class="st">'salary'</span>].fillna(df[<span class="st">'salary'</span>].median(), inplace=True)
+
+<span class="cm"># Fill by group mean (smarter)</span>
+df[<span class="st">'salary'</span>] = df.groupby(<span class="st">'department'</span>)[<span class="st">'salary'</span>].transform(
+    <span class="kw">lambda</span> x: x.fillna(x.mean())
+)
+
+<span class="cm"># Forward fill / backward fill (for time series)</span>
+df[<span class="st">'price'</span>].fillna(method=<span class="st">'ffill'</span>, inplace=True)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">4.2 Fix data types</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Convert to numeric (coerce turns errors to NaN)</span>
+df[<span class="st">'price'</span>] = pd.to_numeric(df[<span class="st">'price'</span>], errors=<span class="st">'coerce'</span>)
+
+<span class="cm"># Convert to datetime</span>
+df[<span class="st">'date'</span>] = pd.to_datetime(df[<span class="st">'date'</span>], format=<span class="st">'%Y-%m-%d'</span>)
+
+<span class="cm"># Convert to category (saves memory)</span>
+df[<span class="st">'status'</span>] = df[<span class="st">'status'</span>].astype(<span class="st">'category'</span>)
+
+<span class="cm"># Convert to integer</span>
+df[<span class="st">'count'</span>] = df[<span class="st">'count'</span>].astype(<span class="st">'int64'</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">4.3 Clean string / text columns</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Strip whitespace and lowercase</span>
+df[<span class="st">'name'</span>] = df[<span class="st">'name'</span>].str.strip().str.lower()
+
+<span class="cm"># Remove currency symbols and commas</span>
+df[<span class="st">'price'</span>] = df[<span class="st">'price'</span>].str.replace(<span class="st">'$'</span>, <span class="st">''</span>).str.replace(<span class="st">','</span>, <span class="st">''</span>)
+
+<span class="cm"># Remove non-numeric characters</span>
+df[<span class="st">'phone'</span>] = df[<span class="st">'phone'</span>].str.replace(r<span class="st">'[^0-9]'</span>, <span class="st">''</span>, regex=True)
+
+<span class="cm"># Standardize inconsistent values</span>
+df[<span class="st">'gender'</span>] = df[<span class="st">'gender'</span>].replace({
+    <span class="st">'m'</span>: <span class="st">'Male'</span>, <span class="st">'M'</span>: <span class="st">'Male'</span>, <span class="st">'male'</span>: <span class="st">'Male'</span>,
+    <span class="st">'f'</span>: <span class="st">'Female'</span>, <span class="st">'F'</span>: <span class="st">'Female'</span>, <span class="st">'female'</span>: <span class="st">'Female'</span>
+})</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">4.4 Remove duplicates</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Remove exact duplicates</span>
+df.drop_duplicates(inplace=True)
+
+<span class="cm"># Remove duplicates based on key column (keep latest)</span>
+df.drop_duplicates(subset=[<span class="st">'customer_id'</span>], keep=<span class="st">'last'</span>, inplace=True)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">4.5 Handle outliers</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># IQR method (recommended)</span>
+Q1 = df[<span class="st">'salary'</span>].quantile(0.25)
+Q3 = df[<span class="st">'salary'</span>].quantile(0.75)
+IQR = Q3 - Q1
+lower = Q1 - 1.5 * IQR
+upper = Q3 + 1.5 * IQR
+
+<span class="cm"># Option A: Remove outlier rows</span>
+df_clean = df[(df[<span class="st">'salary'</span>] >= lower) & (df[<span class="st">'salary'</span>] <= upper)]
+
+<span class="cm"># Option B: Cap/clip outliers (safer)</span>
+df[<span class="st">'salary'</span>] = df[<span class="st">'salary'</span>].clip(lower, upper)
+
+<span class="cm"># Z-score method</span>
+from scipy import stats
+z_scores = np.abs(stats.zscore(df[<span class="st">'salary'</span>].dropna()))
+df_clean = df[z_scores < 3]</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes"><li>Dropping null values blindly without checking missingness pattern</li><li>Converting dtypes without validating failed coercions</li><li>Deleting all outliers even when they are real business events</li></ul><div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid"><div class="cheat-item"><code>df.info()</code> -> Structure and non-null counts</div><div class="cheat-item"><code>df.describe()</code> -> Numeric summary statistics</div><div class="cheat-item"><code>df.isnull().sum()</code> -> Missing-value counts by column</div><div class="cheat-item"><code>df.groupby()</code> -> Segmented aggregation</div><div class="cheat-item"><code>pd.merge()</code> -> Join multiple datasets</div></div>
+<nav class="nav-footer"><a class="nav-btn" href="03-exploratory-data-analysis.html">&#8592; Previous</a><a class="nav-btn primary" href="05-data-transformation.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

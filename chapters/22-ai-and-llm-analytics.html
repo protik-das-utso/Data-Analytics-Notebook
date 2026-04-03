@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI & LLM Analytics — Data Analytics Notebook</title>
+<meta name="description" content="Modern analysts increasingly work with embeddings, vector search, and LLMs. This chapter covers RAG, embeddings, vector databases, prompt analytics, and how to evaluate an LLM system.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/22-ai-and-llm-analytics.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI &amp; LLM Analytics — Data Analytics Notebook">
+<meta property="og:description" content="Modern analysts increasingly work with embeddings, vector search, and LLMs. This chapter covers RAG, embeddings, vector databases, prompt analytics, and how to evaluate an LLM system.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/22-ai-and-llm-analytics.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AI &amp; LLM Analytics — Data Analytics Notebook">
+<meta name="twitter:title" content="AI &amp; LLM Analytics — Data Analytics Notebook">
+<meta name="twitter:description" content="Modern analysts increasingly work with embeddings, vector search, and LLMs. This chapter covers RAG, embeddings, vector databases, prompt analytics, and how to evaluate an LLM system.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "AI & LLM Analytics",
+  "description": "Modern analysts increasingly work with embeddings, vector search, and LLMs. This chapter covers RAG, embeddings, vector databases, prompt analytics, and how to evaluate an LLM system.",
+  "url": "https://danotebook.protik.dev/chapters/22-ai-and-llm-analytics.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Advanced"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Advanced"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "AI & LLM Analytics",
+    "item": "https://danotebook.protik.dev/chapters/22-ai-and-llm-analytics.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="22-ai-and-llm-analytics.html" data-num="22">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 22 — AI / LLM</div>
+<h1 class="ch-title">AI & LLM Analytics</h1>
+<p class="ch-desc">Modern analysts increasingly work with embeddings, vector search, and LLMs. This chapter covers RAG, embeddings, vector databases, prompt analytics, and how to evaluate an LLM system.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+<div class="note">LLMs don't replace data skills — they add a new layer. The analyst's edge is still <strong>evaluation, measurement, and grounding outputs in real data</strong>.</div>
+<div class="section-title">22.1 Embeddings — turning text into vectors</div>
+<p>An embedding maps text (or images) to a numeric vector where semantic similarity becomes geometric closeness. They power search, clustering, classification, and recommendations on unstructured data.</p>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Local sentence embeddings — no API key needed</span>
+from sentence_transformers import SentenceTransformer
+import numpy as np
+
+model = SentenceTransformer(<span class="st">'all-MiniLM-L6-v2'</span>)
+vecs = model.encode([<span class="st">'refund policy'</span>, <span class="st">'how do I get my money back'</span>])
+
+cos = vecs[<span class="num">0</span>] @ vecs[<span class="num">1</span>] / (np.linalg.norm(vecs[<span class="num">0</span>]) * np.linalg.norm(vecs[<span class="num">1</span>]))
+print(<span class="st">f"similarity: {cos:.2f}"</span>)  <span class="cm"># high — same meaning, different words</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">22.2 Vector databases</div>
+<table class="ref">
+<tr><th>Tool</th><th class="use">Use when</th></tr>
+<tr><td>FAISS</td><td class="use">Local, fast, in-memory similarity search</td></tr>
+<tr><td>Chroma</td><td class="use">Lightweight local RAG prototyping</td></tr>
+<tr><td>Pinecone / Weaviate / Qdrant</td><td class="use">Managed, scalable production vector search</td></tr>
+<tr><td>pgvector</td><td class="use">You already run Postgres and want vectors alongside SQL</td></tr>
+</table>
+<div class="section-title">22.3 RAG — Retrieval-Augmented Generation</div>
+<p>RAG grounds an LLM in your own documents so it answers from facts instead of hallucinating. It is the most common enterprise LLM pattern.</p>
+<ul class="pipeline"><li>Chunk docs</li><li>Embed chunks</li><li>Store in vector DB</li><li>Embed query</li><li>Retrieve top-K</li><li>LLM answers with context</li></ul>
+<div class="dtree"><div class="dtree-label">RAG vs alternatives</div><pre>Need the model to know your private/fresh data?
+│
+├── <span class="branch">Facts change often, large corpus</span> ──► <span class="leaf">RAG (retrieve at query time)</span>
+├── <span class="branch">Fixed style / format / behaviour</span> ──► <span class="leaf">Fine-tuning</span>
+└── <span class="branch">Small, stable context</span> ───────────► <span class="leaf">Just put it in the prompt</span></pre></div>
+<div class="section-title">22.4 Evaluating an LLM system</div>
+<table class="ref">
+<tr><th>Dimension</th><th>Question</th><th>How to measure</th></tr>
+<tr><td>Faithfulness</td><td>Is the answer grounded in retrieved context?</td><td>LLM-as-judge, RAGAS faithfulness</td></tr>
+<tr><td>Relevance</td><td>Does it answer the question asked?</td><td>Answer-relevance score, human rating</td></tr>
+<tr><td>Retrieval quality</td><td>Were the right chunks fetched?</td><td>Context precision / recall, hit@K</td></tr>
+<tr><td>Correctness</td><td>Does it match a known answer?</td><td>Exact match / F1 vs gold set</td></tr>
+<tr><td>Safety</td><td>Toxic, biased, or leaking PII?</td><td>Guardrail classifiers, red-teaming</td></tr>
+<tr><td>Cost / latency</td><td>Affordable and fast enough?</td><td>Tokens per query, p95 latency</td></tr>
+</table>
+<div class="warn">Never ship an LLM feature without an <strong>evaluation set</strong>. Build a fixed set of question–answer pairs and score every prompt or model change against it — "it looked good in a few tries" is not evaluation.</div>
+<div class="section-title">22.5 Prompt analytics</div>
+<ul class="steps">
+<li>Version prompts like code — track which prompt produced which output</li>
+<li>Log inputs, outputs, token counts, latency, and cost per call</li>
+<li>A/B test prompt variants against your evaluation set, not vibes</li>
+<li>Monitor for drift in output quality as models are updated by the provider</li>
+<li>Cache frequent queries to cut cost and latency</li>
+</ul>
+<div class="rec-box"><h4>Professional recommendation</h4><div class="rec-grid">
+<div class="rec-item"><span class="rk">Prototype</span><span class="rv">Chroma + MiniLM + RAG</span></div>
+<div class="rec-item"><span class="rk">Production</span><span class="rv">Managed vector DB + eval gate</span></div>
+<div class="rec-item"><span class="rk">Quality</span><span class="rv">RAGAS / LLM-as-judge</span></div>
+<div class="rec-item"><span class="rk">Customise</span><span class="rv">RAG before fine-tuning</span></div>
+</div></div>
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes"><li>Shipping an LLM feature with no fixed evaluation set</li><li>Trusting RAG answers without checking faithfulness to the context</li><li>Fine-tuning when retrieval (RAG) would have solved it cheaper</li></ul><div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid"><div class="cheat-item"><code>SentenceTransformer.encode()</code> -> Text to embeddings</div><div class="cheat-item"><code>faiss / chroma</code> -> Vector similarity search</div><div class="cheat-item"><code>retrieve top-K + prompt</code> -> RAG grounding</div><div class="cheat-item"><code>RAGAS faithfulness</code> -> Score grounded answers</div><div class="cheat-item"><code>log tokens + latency</code> -> Prompt cost analytics</div></div>
+<nav class="nav-footer"><a class="nav-btn" href="21-mlops-deploy-monitor-retrain.html">&#8592; Previous</a><a class="nav-btn primary" href="23-probability-and-statistics-foundations.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Interpretability &amp; Explainability — Data Analytics Notebook</title>
+<meta name="description" content="A model you can't explain is one you can't trust or ship in regulated settings. Global vs local explanations, SHAP, permutation importance, PDP, and their pitfalls.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/32-model-interpretability-and-explainability.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Model Interpretability &amp; Explainability — Data Analytics Notebook">
+<meta property="og:description" content="A model you can't explain is one you can't trust or ship in regulated settings. Global vs local explanations, SHAP, permutation importance, PDP, and their pitfalls.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/32-model-interpretability-and-explainability.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Model Interpretability &amp; Explainability — Data Analytics Notebook">
+<meta name="twitter:title" content="Model Interpretability &amp; Explainability — Data Analytics Notebook">
+<meta name="twitter:description" content="A model you can't explain is one you can't trust or ship in regulated settings. Global vs local explanations, SHAP, permutation importance, PDP, and their pitfalls.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Model Interpretability & Explainability",
+  "description": "A model you can't explain is one you can't trust or ship in regulated settings. Global vs local explanations, SHAP, permutation importance, PDP, and their pitfalls.",
+  "url": "https://danotebook.protik.dev/chapters/32-model-interpretability-and-explainability.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Modeling"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Modeling"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Model Interpretability & Explainability",
+    "item": "https://danotebook.protik.dev/chapters/32-model-interpretability-and-explainability.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="32-model-interpretability-and-explainability.html" data-num="32">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 32 — Interpretability</div>
+<h1 class="ch-title">Model Interpretability & Explainability</h1>
+<p class="ch-desc">A model you can't explain is one you can't trust or ship in regulated settings. Global vs local explanations, SHAP, permutation importance, PDP, and their pitfalls.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+
+<div class="note">Stakeholders, regulators, and your future self all ask "why did the model decide that?" Interpretability turns a black box into something you can debug, defend, and deploy responsibly.</div>
+
+<div class="section-title">32.1 Global vs local</div>
+<div class="dtree"><div class="dtree-label">what question?</div><pre>What do you need to explain?
+│
+├── "What drives the model overall?" ──► <span class="branch">GLOBAL</span>
+│      ├── Permutation importance
+│      ├── SHAP summary plot
+│      └── Partial dependence (PDP)
+│
+└── "Why THIS prediction?" ────────────► <span class="branch">LOCAL</span>
+       ├── SHAP force/waterfall
+       └── LIME</pre></div>
+
+<div class="section-title">32.2 Intrinsic vs post-hoc</div>
+<div class="gb-grid">
+<div class="gb-card gb-good"><h5>Intrinsic (glass-box)</h5>Linear/logistic coefficients, shallow decision trees, rule sets. Explainable by construction. Prefer when a simple model is accurate enough.</div>
+<div class="gb-card gb-bad"><h5>Post-hoc (explain a black box)</h5>SHAP, LIME, PDP applied after the fact to RF/XGBoost/NN. Powerful but approximate — explanations can mislead if features are correlated.</div>
+</div>
+
+<div class="section-title">32.3 The techniques</div>
+<table class="ref">
+<tr><th>Method</th><th>Scope</th><th class="use">Strength</th><th class="avoid">Pitfall</th></tr>
+<tr><td>Coefficients</td><td>Global</td><td class="use">Exact, free (linear models)</td><td class="avoid">Only for linear; scale matters</td></tr>
+<tr><td>Permutation importance</td><td>Global</td><td class="use">Model-agnostic, simple</td><td class="avoid">Misleads with correlated features</td></tr>
+<tr><td>SHAP</td><td>Both</td><td class="use">Consistent, local + global</td><td class="avoid">Slow on big data; assumes feature independence</td></tr>
+<tr><td>PDP / ICE</td><td>Global</td><td class="use">Shows effect shape</td><td class="avoid">Hides interactions (PDP)</td></tr>
+<tr><td>LIME</td><td>Local</td><td class="use">Any model, intuitive</td><td class="avoid">Unstable across runs</td></tr>
+</table>
+
+<div class="section-title">32.4 SHAP — the modern default</div>
+<p>SHAP assigns each feature a contribution to each prediction, grounded in game theory. It unifies local ("why this row?") and global ("what matters overall?") views.</p>
+<div class="code-block"><div class="code-label">python</div><pre>import shap
+explainer = shap.TreeExplainer(model)        <span class="cm"># fast for tree models</span>
+shap_values = explainer.shap_values(X_test)
+
+shap.summary_plot(shap_values, X_test)        <span class="cm"># global: ranked impact</span>
+shap.plots.waterfall(explainer(X_test)[<span class="num">0</span>])  <span class="cm"># local: one prediction</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="dtree"><div class="dtree-label">reading a SHAP waterfall</div><pre>base value (avg prediction)
+   + feature A pushed up   ▲ +0.12
+   − feature B pushed down ▼ −0.05
+   + feature C pushed up   ▲ +0.03
+   ─────────────────────────────
+   = this row's prediction</pre></div>
+
+<div class="section-title">32.5 The correlated-features trap</div>
+<div class="warn">When features are correlated, importance "splits" between them and permutation/SHAP can assign credit oddly — a key driver may look weak because a correlated twin shares the credit. Reduce redundancy first (Chapter 15.5) and interpret groups, not lone features.</div>
+
+<div class="rec-box"><h4>Professional recommendation</h4><div class="rec-grid">
+<div class="rec-item"><span class="rk">Need trust + simple</span><span class="rv">Logistic/linear, read coefficients</span></div>
+<div class="rec-item"><span class="rk">Tree model</span><span class="rv">SHAP TreeExplainer</span></div>
+<div class="rec-item"><span class="rk">Effect shape</span><span class="rv">PDP + ICE</span></div>
+<div class="rec-item"><span class="rk">Regulated</span><span class="rv">Prefer glass-box models</span></div>
+</div></div>
+
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes">
+<li>Reading feature importance as causal effect</li>
+<li>Trusting importances when features are highly correlated</li>
+<li>Using PDP on interacting features (it averages the interaction away)</li>
+<li>Explaining a needlessly complex model when a glass-box would do</li>
+<li>Comparing unscaled linear coefficients as if they're importances</li>
+</ul>
+<div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid">
+<div class="cheat-item"><code>shap.TreeExplainer(model)</code> -> fast SHAP for trees</div>
+<div class="cheat-item"><code>shap.summary_plot()</code> -> global importance</div>
+<div class="cheat-item"><code>permutation_importance()</code> -> model-agnostic global</div>
+<div class="cheat-item"><code>PartialDependenceDisplay</code> -> effect shape</div>
+<div class="cheat-item"><code>glass-box first</code> -> when explanation matters</div>
+</div>
+<nav class="nav-footer"><a class="nav-btn" href="31-unsupervised-learning-clustering-and-dimensionality-reduction.html">&#8592; Previous</a><a class="nav-btn primary" href="33-nlp-fundamentals.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

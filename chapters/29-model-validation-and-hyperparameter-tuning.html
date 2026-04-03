@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Validation &amp; Hyperparameter Tuning — Data Analytics Notebook</title>
+<meta name="description" content="How to estimate true performance and tune without fooling yourself: cross-validation strategies, the search methods, nested CV, and probability calibration.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/29-model-validation-and-hyperparameter-tuning.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Model Validation &amp; Hyperparameter Tuning — Data Analytics Notebook">
+<meta property="og:description" content="How to estimate true performance and tune without fooling yourself: cross-validation strategies, the search methods, nested CV, and probability calibration.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/29-model-validation-and-hyperparameter-tuning.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Model Validation &amp; Hyperparameter Tuning — Data Analytics Notebook">
+<meta name="twitter:title" content="Model Validation &amp; Hyperparameter Tuning — Data Analytics Notebook">
+<meta name="twitter:description" content="How to estimate true performance and tune without fooling yourself: cross-validation strategies, the search methods, nested CV, and probability calibration.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Model Validation & Hyperparameter Tuning",
+  "description": "How to estimate true performance and tune without fooling yourself: cross-validation strategies, the search methods, nested CV, and probability calibration.",
+  "url": "https://danotebook.protik.dev/chapters/29-model-validation-and-hyperparameter-tuning.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Modeling"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Modeling"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Model Validation & Hyperparameter Tuning",
+    "item": "https://danotebook.protik.dev/chapters/29-model-validation-and-hyperparameter-tuning.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="29-model-validation-and-hyperparameter-tuning.html" data-num="29">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 29 — Validation & Tuning</div>
+<h1 class="ch-title">Model Validation & Hyperparameter Tuning</h1>
+<p class="ch-desc">How to estimate true performance and tune without fooling yourself: cross-validation strategies, the search methods, nested CV, and probability calibration.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+
+<div class="note">A single train/test split gives a noisy, often optimistic score. Proper validation is what separates a model that works in production from one that only looked good once.</div>
+
+<div class="section-title">29.1 Why one split isn't enough</div>
+<div class="dtree"><div class="dtree-label">k-fold cross-validation</div><pre>Data split into k folds (e.g. k=5):
+Fold1  [TEST ][train][train][train][train]
+Fold2  [train][TEST ][train][train][train]
+...    each fold is the test set once
+Score = average of k test scores  ── lower-variance estimate</pre></div>
+
+<div class="section-title">29.2 Choosing a CV strategy</div>
+<div class="dtree"><div class="dtree-label">decision tree</div><pre>Your data is...
+│
+├── plain tabular ───────────────► <span class="leaf">KFold</span>
+├── classification (esp. imbalanced) ► <span class="leaf">StratifiedKFold</span>
+├── grouped (same user many rows) ──► <span class="leaf">GroupKFold</span>
+├── time-ordered ──────────────────► <span class="leaf">TimeSeriesSplit</span>
+└── grouped + imbalanced ──────────► <span class="leaf">StratifiedGroupKFold</span></pre></div>
+<div class="code-block"><div class="code-label">python</div><pre>from sklearn.model_selection import cross_val_score, StratifiedKFold
+cv = StratifiedKFold(n_splits=<span class="num">5</span>, shuffle=<span class="kw">True</span>, random_state=<span class="num">42</span>)
+scores = cross_val_score(pipe, X, y, cv=cv, scoring=<span class="st">'roc_auc'</span>)
+print(<span class="st">f"AUC {scores.mean():.3f} &plusmn; {scores.std():.3f}"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+
+<div class="section-title">29.3 Hyperparameter search methods</div>
+<table class="ref">
+<tr><th>Method</th><th class="use">Use when</th><th class="avoid">Weakness</th></tr>
+<tr><td>Grid search</td><td class="use">Few params, small grid</td><td class="avoid">Explodes combinatorially</td></tr>
+<tr><td>Random search</td><td class="use">Many params, limited budget</td><td class="avoid">No learning between trials</td></tr>
+<tr><td>Bayesian (Optuna)</td><td class="use">Expensive models, want efficiency</td><td class="avoid">More setup</td></tr>
+<tr><td>Hyperband / ASHA</td><td class="use">Can early-stop bad trials</td><td class="avoid">Needs a partial-fit signal</td></tr>
+</table>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Optuna: efficient, modern default</span>
+import optuna
+<span class="kw">def</span> <span class="fn">objective</span>(trial):
+    params = {
+        <span class="st">'num_leaves'</span>: trial.suggest_int(<span class="st">'num_leaves'</span>, <span class="num">15</span>, <span class="num">255</span>),
+        <span class="st">'learning_rate'</span>: trial.suggest_float(<span class="st">'learning_rate'</span>, <span class="num">1e-3</span>, <span class="num">0.3</span>, log=<span class="kw">True</span>),
+    }
+    return cross_val_score(LGBMClassifier(**params), X, y, cv=<span class="num">5</span>, scoring=<span class="st">'roc_auc'</span>).mean()
+
+study = optuna.create_study(direction=<span class="st">'maximize'</span>)
+study.optimize(objective, n_trials=<span class="num">50</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+
+<div class="section-title">29.4 Nested CV — the honest score</div>
+<p>If you tune on the same folds you evaluate on, the reported score is optimistic. Nested CV keeps an <strong>outer loop for evaluation</strong> and an <strong>inner loop for tuning</strong>.</p>
+<div class="dtree"><div class="dtree-label">nested cv</div><pre>Outer fold (evaluate)
+   └── Inner CV (tune hyperparameters)
+          └── pick best params
+   └── score best model on the untouched outer test fold
+Repeat → unbiased performance estimate</pre></div>
+
+<div class="section-title">29.5 Probability calibration</div>
+<p>Many models output scores, not true probabilities. If you act on the probability (expected value, thresholds), calibrate it.</p>
+<div class="gb-grid">
+<div class="gb-card gb-bad"><h5>Uncalibrated</h5>Model says "0.9" but only 60% of those are positive. Decisions based on the number are wrong.</div>
+<div class="gb-card gb-good"><h5>Calibrated</h5>Platt scaling (sigmoid) or isotonic regression maps scores to honest probabilities. Check with a reliability curve + Brier score.</div>
+</div>
+<div class="rec-box"><h4>Professional recommendation</h4><div class="rec-grid">
+<div class="rec-item"><span class="rk">Default CV</span><span class="rv">StratifiedKFold, k=5</span></div>
+<div class="rec-item"><span class="rk">Tuning</span><span class="rv">Optuna, fixed budget</span></div>
+<div class="rec-item"><span class="rk">Final score</span><span class="rv">Nested CV or held-out set</span></div>
+<div class="rec-item"><span class="rk">Probabilities</span><span class="rv">Calibrate + Brier score</span></div>
+</div></div>
+
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes">
+<li>Reporting the tuning score as the final performance (optimistic)</li>
+<li>Random KFold on grouped or time-ordered data</li>
+<li>Preprocessing outside the CV loop (leakage — use a Pipeline)</li>
+<li>Grid-searching a huge space when random/Bayesian is far cheaper</li>
+<li>Treating raw model scores as calibrated probabilities</li>
+</ul>
+<div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid">
+<div class="cheat-item"><code>StratifiedKFold(shuffle=True)</code> -> classification CV</div>
+<div class="cheat-item"><code>cross_val_score(pipe, ...)</code> -> leak-safe scoring</div>
+<div class="cheat-item"><code>optuna.create_study()</code> -> efficient tuning</div>
+<div class="cheat-item"><code>CalibratedClassifierCV</code> -> honest probabilities</div>
+<div class="cheat-item"><code>nested CV</code> -> unbiased estimate</div>
+</div>
+<nav class="nav-footer"><a class="nav-btn" href="28-time-series-analysis-and-forecasting.html">&#8592; Previous</a><a class="nav-btn primary" href="30-imbalanced-learning.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

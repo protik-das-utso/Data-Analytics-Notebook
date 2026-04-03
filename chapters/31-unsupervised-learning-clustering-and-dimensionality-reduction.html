@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unsupervised Learning — Data Analytics Notebook</title>
+<meta name="description" content="No labels, just structure. Clustering (K-Means, DBSCAN, hierarchical), choosing k, and dimensionality reduction (PCA, t-SNE, UMAP) for compression and visualization.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/31-unsupervised-learning-clustering-and-dimensionality-reduction.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unsupervised Learning — Data Analytics Notebook">
+<meta property="og:description" content="No labels, just structure. Clustering (K-Means, DBSCAN, hierarchical), choosing k, and dimensionality reduction (PCA, t-SNE, UMAP) for compression and visualization.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/31-unsupervised-learning-clustering-and-dimensionality-reduction.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Unsupervised Learning — Data Analytics Notebook">
+<meta name="twitter:title" content="Unsupervised Learning — Data Analytics Notebook">
+<meta name="twitter:description" content="No labels, just structure. Clustering (K-Means, DBSCAN, hierarchical), choosing k, and dimensionality reduction (PCA, t-SNE, UMAP) for compression and visualization.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Unsupervised Learning",
+  "description": "No labels, just structure. Clustering (K-Means, DBSCAN, hierarchical), choosing k, and dimensionality reduction (PCA, t-SNE, UMAP) for compression and visualization.",
+  "url": "https://danotebook.protik.dev/chapters/31-unsupervised-learning-clustering-and-dimensionality-reduction.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Modeling"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Modeling"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Unsupervised Learning",
+    "item": "https://danotebook.protik.dev/chapters/31-unsupervised-learning-clustering-and-dimensionality-reduction.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="31-unsupervised-learning-clustering-and-dimensionality-reduction.html" data-num="31">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 31 — Unsupervised</div>
+<h1 class="ch-title">Unsupervised Learning</h1>
+<p class="ch-desc">No labels, just structure. Clustering (K-Means, DBSCAN, hierarchical), choosing k, and dimensionality reduction (PCA, t-SNE, UMAP) for compression and visualization.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+
+<div class="note">Unsupervised learning finds structure when there's no target: customer segments, anomalies, topic groups, and lower-dimensional views of high-dimensional data.</div>
+
+<div class="section-title">31.1 Two main jobs</div>
+<div class="dtree"><div class="dtree-label">what do you want?</div><pre>No labels — goal?
+│
+├── Group similar rows ──────────► <span class="leaf">Clustering</span>
+└── Reduce # of features ────────► <span class="leaf">Dimensionality reduction</span>
+        ├── for modeling/compression ► PCA
+        └── for visualization ───────► t-SNE / UMAP</pre></div>
+
+<div class="section-title">31.2 Clustering algorithms</div>
+<table class="ref">
+<tr><th>Algorithm</th><th class="use">Use when</th><th class="avoid">Avoid when</th></tr>
+<tr><td>K-Means</td><td class="use">Round, similar-size clusters; you can pick k</td><td class="avoid">Odd shapes, outliers, varying density</td></tr>
+<tr><td>DBSCAN</td><td class="use">Arbitrary shapes, finds outliers, k unknown</td><td class="avoid">Clusters of very different density</td></tr>
+<tr><td>Hierarchical</td><td class="use">Want a dendrogram / nested structure</td><td class="avoid">Large datasets (slow)</td></tr>
+<tr><td>Gaussian Mixture</td><td class="use">Soft assignment, elliptical clusters</td><td class="avoid">Non-Gaussian shapes</td></tr>
+</table>
+<div class="warn">K-Means uses distances — <strong>scale your features first</strong> (Chapter 15.4), or the largest-range column dominates the clustering.</div>
+
+<div class="section-title">31.3 Choosing k for K-Means</div>
+<div class="dtree"><div class="dtree-label">how many clusters?</div><pre>Run k = 2..10, then...
+│
+├── Elbow: plot inertia vs k, find the bend
+├── Silhouette: pick k with highest avg silhouette
+└── Business sense: do the segments mean something?</pre></div>
+<div class="code-block"><div class="code-label">python</div><pre>from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+<span class="kw">for</span> k <span class="kw">in</span> range(<span class="num">2</span>, <span class="num">9</span>):
+    km = KMeans(n_clusters=k, n_init=<span class="st">'auto'</span>, random_state=<span class="num">42</span>).fit(X_scaled)
+    print(k, silhouette_score(X_scaled, km.labels_))</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+
+<div class="section-title">31.4 Dimensionality reduction</div>
+<table class="ref">
+<tr><th>Method</th><th class="use">Use for</th><th>Note</th></tr>
+<tr><td>PCA</td><td class="use">Compression, denoising, ML input</td><td>Linear, fast, preserves variance</td></tr>
+<tr><td>t-SNE</td><td class="use">2D visualization of clusters</td><td>Slow; distances between clusters not meaningful</td></tr>
+<tr><td>UMAP</td><td class="use">Visualization + preserves global structure</td><td>Faster than t-SNE, great default</td></tr>
+</table>
+<div class="code-block"><div class="code-label">python</div><pre>from sklearn.decomposition import PCA
+pca = PCA(n_components=<span class="num">0.95</span>)         <span class="cm"># keep 95% of variance</span>
+X_reduced = pca.fit_transform(X_scaled)
+print(pca.n_components_, <span class="st">"components kept"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="warn">t-SNE/UMAP are for <strong>seeing</strong>, not measuring. Cluster sizes and between-cluster distances in those plots are distorted — don't read quantities off them.</div>
+
+<div class="section-title">31.5 Evaluating clusters</div>
+<ul class="steps">
+<li>Silhouette score — how tight/separated clusters are (no labels needed)</li>
+<li>Davies-Bouldin / Calinski-Harabasz — internal quality indices</li>
+<li>Profile each cluster — describe it in business terms (the real test)</li>
+<li>Stability — do clusters persist on a new sample?</li>
+</ul>
+<div class="rec-box"><h4>Professional recommendation</h4><div class="rec-grid">
+<div class="rec-item"><span class="rk">First try</span><span class="rv">K-Means on scaled data</span></div>
+<div class="rec-item"><span class="rk">Odd shapes</span><span class="rv">DBSCAN</span></div>
+<div class="rec-item"><span class="rk">Pick k</span><span class="rv">Silhouette + business sense</span></div>
+<div class="rec-item"><span class="rk">Visualize</span><span class="rv">UMAP to 2D</span></div>
+</div></div>
+
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes">
+<li>Running K-Means on unscaled features</li>
+<li>Reading cluster sizes/distances off a t-SNE plot as if they're real</li>
+<li>Picking k from the elbow alone with no business validation</li>
+<li>Using K-Means for non-spherical or varying-density clusters</li>
+<li>Never profiling the clusters — segments nobody can describe are useless</li>
+</ul>
+<div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid">
+<div class="cheat-item"><code>KMeans(n_clusters=k)</code> -> spherical clusters</div>
+<div class="cheat-item"><code>DBSCAN(eps, min_samples)</code> -> shape + outliers</div>
+<div class="cheat-item"><code>silhouette_score()</code> -> cluster quality</div>
+<div class="cheat-item"><code>PCA(n_components=0.95)</code> -> keep 95% variance</div>
+<div class="cheat-item"><code>umap.UMAP()</code> -> 2D visualization</div>
+</div>
+<nav class="nav-footer"><a class="nav-btn" href="30-imbalanced-learning.html">&#8592; Previous</a><a class="nav-btn primary" href="32-model-interpretability-and-explainability.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

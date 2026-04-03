@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Causal Inference — Data Analytics Notebook</title>
+<meta name="description" content="When you can't run an experiment, how do you still claim X caused Y? Confounding, the methods (diff-in-diff, matching, IV, RDD), and how not to fool yourself.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/27-causal-inference.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Causal Inference — Data Analytics Notebook">
+<meta property="og:description" content="When you can't run an experiment, how do you still claim X caused Y? Confounding, the methods (diff-in-diff, matching, IV, RDD), and how not to fool yourself.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/27-causal-inference.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Causal Inference — Data Analytics Notebook">
+<meta name="twitter:title" content="Causal Inference — Data Analytics Notebook">
+<meta name="twitter:description" content="When you can't run an experiment, how do you still claim X caused Y? Confounding, the methods (diff-in-diff, matching, IV, RDD), and how not to fool yourself.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Causal Inference",
+  "description": "When you can't run an experiment, how do you still claim X caused Y? Confounding, the methods (diff-in-diff, matching, IV, RDD), and how not to fool yourself.",
+  "url": "https://danotebook.protik.dev/chapters/27-causal-inference.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Statistics & Experimentation"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Statistics & Experimentation"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Causal Inference",
+    "item": "https://danotebook.protik.dev/chapters/27-causal-inference.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="27-causal-inference.html" data-num="27">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 27 — Causal Inference</div>
+<h1 class="ch-title">Causal Inference</h1>
+<p class="ch-desc">When you can't run an experiment, how do you still claim X caused Y? Confounding, the methods (diff-in-diff, matching, IV, RDD), and how not to fool yourself.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+
+<div class="note">Correlation is everywhere; causation drives decisions. When an A/B test is impossible (ethics, history, scale), causal inference estimates the effect from observational data — carefully.</div>
+
+<div class="section-title">27.1 Why correlation isn't causation</div>
+<div class="dtree"><div class="dtree-label">the confounder problem</div><pre>          Confounder (Z)
+          /            \
+         ▼              ▼
+   Treatment (X) ───?──► Outcome (Y)
+
+Ice-cream sales (X) correlate with drownings (Y)
+   ... because <span class="branch">temperature (Z)</span> drives both.
+Control for Z or the effect is an illusion.</pre></div>
+
+<div class="section-title">27.2 The gold standard & its substitutes</div>
+<table class="ref">
+<tr><th>Method</th><th class="use">Use when</th><th>Key assumption</th></tr>
+<tr><td>Randomized experiment (RCT)</td><td class="use">You can randomize</td><td>Randomization balances confounders</td></tr>
+<tr><td>Difference-in-Differences</td><td class="use">A group got treated at a known time, another didn't</td><td>Parallel trends pre-treatment</td></tr>
+<tr><td>Matching / propensity scores</td><td class="use">Compare similar treated vs untreated units</td><td>No unmeasured confounders</td></tr>
+<tr><td>Instrumental variables</td><td class="use">A variable shifts treatment but not outcome directly</td><td>Valid, relevant instrument</td></tr>
+<tr><td>Regression discontinuity</td><td class="use">Treatment assigned by a cutoff</td><td>Units near cutoff are comparable</td></tr>
+</table>
+
+<div class="section-title">27.3 Difference-in-Differences (the analyst workhorse)</div>
+<p>Compare the <em>change</em> in a treated group to the <em>change</em> in a control group. The control's change estimates what would have happened anyway.</p>
+<div class="dtree"><div class="dtree-label">DiD logic</div><pre>                 Before    After    Change
+Treated group      A         B       B−A
+Control group      C         D       D−C
+                                     ─────
+Causal effect =  (B−A) − (D−C)   ← removes shared trends</pre></div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># DiD as a regression: interaction term IS the effect</span>
+import statsmodels.formula.api as smf
+m = smf.ols(<span class="st">'y ~ treated * post'</span>, data=df).fit()
+print(m.params[<span class="st">'treated:post'</span>])   <span class="cm"># the causal estimate</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="warn">DiD only works if the two groups moved in <strong>parallel before treatment</strong>. Always plot pre-period trends — if they diverge, the estimate is biased.</div>
+
+<div class="section-title">27.4 Propensity score matching</div>
+<ul class="steps">
+<li>Model probability of being treated from covariates (logistic regression)</li>
+<li>Match each treated unit to control unit(s) with a similar score</li>
+<li>Check covariate balance after matching (standardized mean differences)</li>
+<li>Compare outcomes within matched pairs</li>
+</ul>
+
+<div class="section-title">27.5 Picking a method</div>
+<div class="dtree"><div class="dtree-label">decision tree</div><pre>Can you randomize?
+│
+├── YES ───────────────────────► <span class="leaf">Run an RCT (Chapter 26)</span>
+└── NO
+    ├── Clear before/after + control group ──► <span class="leaf">Difference-in-Differences</span>
+    ├── Treatment by a sharp threshold ──────► <span class="leaf">Regression Discontinuity</span>
+    ├── Have a valid instrument ─────────────► <span class="leaf">Instrumental Variables</span>
+    └── Rich covariates, no clean design ────► <span class="leaf">Matching / propensity scores</span></pre></div>
+
+<div class="rec-box"><h4>Professional recommendation</h4><p style="margin:0">Prefer a real experiment whenever feasible. When not, <strong>draw the causal diagram (DAG) first</strong> to decide what to control for — controlling for the wrong variable (a collider or mediator) <em>adds</em> bias. State your identifying assumption explicitly and test it (e.g. parallel-trends plot).</p></div>
+
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes">
+<li>Claiming causation from a regression coefficient on observational data</li>
+<li>Controlling for a mediator or collider, which introduces bias</li>
+<li>Using DiD without checking the parallel-trends assumption</li>
+<li>Adding every available variable as a control "to be safe"</li>
+<li>Ignoring unmeasured confounders that no model can fix</li>
+</ul>
+<div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid">
+<div class="cheat-item"><code>y ~ treated * post</code> -> diff-in-diff effect</div>
+<div class="cheat-item"><code>parallel trends plot</code> -> validate DiD</div>
+<div class="cheat-item"><code>PsmPy / nearest-neighbor</code> -> propensity matching</div>
+<div class="cheat-item"><code>DAG</code> -> decide what to control for</div>
+<div class="cheat-item"><code>linearmodels IV2SLS</code> -> instrumental variables</div>
+</div>
+<nav class="nav-footer"><a class="nav-btn" href="26-ab-testing-and-experimentation.html">&#8592; Previous</a><a class="nav-btn primary" href="28-time-series-analysis-and-forecasting.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

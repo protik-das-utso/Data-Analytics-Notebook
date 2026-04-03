@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Loading — Data Analytics Notebook</title>
+<meta name="description" content="How to load data from different sources — CSV, Excel, JSON, databases, and web APIs.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/02-data-loading.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Data Loading — Data Analytics Notebook">
+<meta property="og:description" content="How to load data from different sources — CSV, Excel, JSON, databases, and web APIs.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/02-data-loading.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Data Loading — Data Analytics Notebook">
+<meta name="twitter:title" content="Data Loading — Data Analytics Notebook">
+<meta name="twitter:description" content="How to load data from different sources — CSV, Excel, JSON, databases, and web APIs.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Data Loading",
+  "description": "How to load data from different sources — CSV, Excel, JSON, databases, and web APIs.",
+  "url": "https://danotebook.protik.dev/chapters/02-data-loading.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Foundations"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Foundations"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Data Loading",
+    "item": "https://danotebook.protik.dev/chapters/02-data-loading.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="02-data-loading.html" data-num="2">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 02 — Loading</div>
+<h1 class="ch-title">Data Loading</h1>
+<p class="ch-desc">How to load data from different sources — CSV, Excel, JSON, databases, and web APIs.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+<div class="section-title">2.0 Source selection guide</div>
+<table class="ref">
+<tr><th>Source type</th><th>Use when</th><th>Why use it</th><th>Skip / caution</th></tr>
+<tr><td>CSV</td><td>Flat tabular data, easy sharing</td><td>Simple and universal format</td><td>Skip for very large repeated pipelines where Parquet is faster and smaller</td></tr>
+<tr><td>Excel</td><td>Business files with multiple sheets/manual inputs</td><td>Good for stakeholder-ready files</td><td>Skip as a primary storage for big automated jobs</td></tr>
+<tr><td>JSON/API</td><td>Nested web/app events</td><td>Captures rich hierarchical data</td><td>Skip direct analysis before flattening and validating schema drift</td></tr>
+<tr><td>SQL</td><td>Production-grade relational data</td><td>Filter at source and keep logic reproducible</td><td>Skip full table pulls when only a subset is needed</td></tr>
+<tr><td>Parquet</td><td>Large analytics pipelines</td><td>Columnar + compressed + fast read/write</td><td>Skip if your consumers only use Excel tools</td></tr>
+</table>
+<div class="tip">System to use for repeatable analysis: keep raw data in files or database tables, run cleaning/transforms in Python (pandas), and save processed outputs in Parquet plus a final CSV/Excel for sharing. This gives speed for you and compatibility for others.</div>
+<div class="xforge"><span class="xf-tag">DataXForge</span>Convert formats without code: <a href="https://dataxforge.com/tools/csv-to-json" target="_blank" rel="noopener">CSV → JSON</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/excel-to-csv" target="_blank" rel="noopener">Excel → CSV</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/json-to-yaml" target="_blank" rel="noopener">JSON ↔ YAML</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/xml-to-json" target="_blank" rel="noopener">XML → JSON</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/tsv-to-csv" target="_blank" rel="noopener">TSV → CSV</a>.</div>
+<div class="section-title">2.1 Load CSV file</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Basic</span>
+df = pd.read_csv(<span class="st">'data/raw/file.csv'</span>)
+
+<span class="cm"># With options</span>
+df = pd.read_csv(
+    <span class="st">'data/raw/file.csv'</span>,
+    sep=<span class="st">','</span>,                        <span class="cm"># delimiter (use '	' for TSV)</span>
+    encoding=<span class="st">'utf-8'</span>,               <span class="cm"># try 'latin-1' if errors occur</span>
+    parse_dates=[<span class="st">'date_column'</span>],     <span class="cm"># auto-parse date columns</span>
+    index_col=None,                   <span class="cm"># don't use any column as index</span>
+    na_values=[<span class="st">'N/A'</span>, <span class="st">'--'</span>, <span class="st">''</span>, <span class="st">'null'</span>],
+    nrows=1000                        <span class="cm"># load first 1000 rows only</span>
+)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">2.2 Load Excel</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Single sheet</span>
+df = pd.read_excel(<span class="st">'data/raw/file.xlsx'</span>, sheet_name=<span class="st">'Sheet1'</span>)
+
+<span class="cm"># All sheets into a dictionary</span>
+all_sheets = pd.read_excel(<span class="st">'file.xlsx'</span>, sheet_name=None)
+df = all_sheets[<span class="st">'Sales'</span>]      <span class="cm"># access specific sheet</span>
+<span class="fn">print</span>(all_sheets.keys())      <span class="cm"># see all sheet names</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">2.3 Load JSON / Web APIs</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># JSON file</span>
+df = pd.read_json(<span class="st">'data.json'</span>)
+
+<span class="cm"># From a REST API</span>
+<span class="kw">import</span> requests
+response = requests.get(<span class="st">'https://api.example.com/data'</span>)
+data = response.json()
+df = pd.DataFrame(data)           <span class="cm"># if data is a list of records</span>
+df = pd.DataFrame(data[<span class="st">'results'</span>])  <span class="cm"># if nested</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">2.4 Load from SQL database</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="kw">import</span> sqlite3
+
+<span class="cm"># SQLite (local file)</span>
+conn = sqlite3.connect(<span class="st">'database.db'</span>)
+df = pd.read_sql_query(<span class="st">"SELECT * FROM sales WHERE year = 2024"</span>, conn)
+conn.close()
+
+<span class="cm"># MySQL / PostgreSQL (via sqlalchemy)</span>
+<span class="kw">import</span> sqlalchemy
+engine = sqlalchemy.create_engine(<span class="st">'mysql+pymysql://user:pass@host/dbname'</span>)
+df = pd.read_sql(<span class="st">"SELECT * FROM orders LIMIT 10000"</span>, engine)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">2.5 Save your data</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># CSV (most universal)</span>
+df.to_csv(<span class="st">'data/processed/clean.csv'</span>, index=False)
+
+<span class="cm"># Excel</span>
+df.to_excel(<span class="st">'output.xlsx'</span>, sheet_name=<span class="st">'Results'</span>, index=False)
+
+<span class="cm"># Parquet (fast, compressed — best for large files)</span>
+df.to_parquet(<span class="st">'data/processed/clean.parquet'</span>, index=False)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes"><li>Skipping business context before running technical steps</li><li>Not writing assumptions and limitations explicitly</li><li>Treating one metric as the full story</li></ul><div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid"><div class="cheat-item"><code>df.info()</code> -> Structure and non-null counts</div><div class="cheat-item"><code>df.describe()</code> -> Numeric summary statistics</div><div class="cheat-item"><code>df.isnull().sum()</code> -> Missing-value counts by column</div><div class="cheat-item"><code>df.groupby()</code> -> Segmented aggregation</div><div class="cheat-item"><code>pd.merge()</code> -> Join multiple datasets</div></div>
+<nav class="nav-footer"><a class="nav-btn" href="01-environment-and-libraries.html">&#8592; Previous</a><a class="nav-btn primary" href="03-exploratory-data-analysis.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

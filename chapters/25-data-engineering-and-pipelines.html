@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Engineering &amp; Pipelines — Data Analytics Notebook</title>
+<meta name="description" content="Where data lives and how it flows: warehouses vs lakes, ETL vs ELT, batch vs streaming, orchestration, dbt, and what scales beyond pandas.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/25-data-engineering-and-pipelines.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Data Engineering &amp; Pipelines — Data Analytics Notebook">
+<meta property="og:description" content="Where data lives and how it flows: warehouses vs lakes, ETL vs ELT, batch vs streaming, orchestration, dbt, and what scales beyond pandas.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/25-data-engineering-and-pipelines.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Data Engineering &amp; Pipelines — Data Analytics Notebook">
+<meta name="twitter:title" content="Data Engineering &amp; Pipelines — Data Analytics Notebook">
+<meta name="twitter:description" content="Where data lives and how it flows: warehouses vs lakes, ETL vs ELT, batch vs streaming, orchestration, dbt, and what scales beyond pandas.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Data Engineering & Pipelines",
+  "description": "Where data lives and how it flows: warehouses vs lakes, ETL vs ELT, batch vs streaming, orchestration, dbt, and what scales beyond pandas.",
+  "url": "https://danotebook.protik.dev/chapters/25-data-engineering-and-pipelines.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Data & SQL"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Data & SQL"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Data Engineering & Pipelines",
+    "item": "https://danotebook.protik.dev/chapters/25-data-engineering-and-pipelines.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="25-data-engineering-and-pipelines.html" data-num="25">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 25 — Data Engineering</div>
+<h1 class="ch-title">Data Engineering & Pipelines</h1>
+<p class="ch-desc">Where data lives and how it flows: warehouses vs lakes, ETL vs ELT, batch vs streaming, orchestration, dbt, and what scales beyond pandas.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+
+<div class="note">Analysts who understand the pipeline ship faster and break less. You don't have to build it all — but you must know where your data comes from, how fresh it is, and what breaks when it's late.</div>
+
+<div class="section-title">25.1 The modern data stack</div>
+<div class="dtree"><div class="dtree-label">data flow</div><pre>Sources (apps, APIs, DBs, events)
+   │  EXTRACT  (Fivetran / Airbyte / custom)
+   ▼
+Raw landing  ──► <span class="branch">Warehouse / Lake</span> (Snowflake, BigQuery, Redshift, Databricks)
+   │  TRANSFORM  (dbt / SQL)
+   ▼
+Modeled tables (clean, tested, documented)
+   │
+   ├──► BI dashboards (Looker, Tableau, Power BI)
+   ├──► ML feature store / training
+   └──► reverse-ETL back into tools</pre></div>
+
+<div class="section-title">25.2 ETL vs ELT</div>
+<div class="gb-grid">
+<div class="gb-card gb-bad"><h5>ETL (older)</h5>Transform <em>before</em> loading. Rigid, transforms on a separate server. Good when storage is expensive or data must be cleaned pre-load.</div>
+<div class="gb-card gb-good"><h5>ELT (modern default)</h5>Load raw first, transform <em>inside</em> the warehouse with SQL/dbt. Cheap storage + powerful warehouses make this the standard. Raw data is always recoverable.</div>
+</div>
+
+<div class="section-title">25.3 Warehouse vs lake vs lakehouse</div>
+<table class="ref">
+<tr><th>Store</th><th>Holds</th><th class="use">Best for</th><th>Examples</th></tr>
+<tr><td>Warehouse</td><td>Structured tables</td><td class="use">BI, SQL analytics</td><td>Snowflake, BigQuery</td></tr>
+<tr><td>Data lake</td><td>Raw files (any type)</td><td class="use">Cheap mass storage, ML</td><td>S3, GCS + Parquet</td></tr>
+<tr><td>Lakehouse</td><td>Files + table layer</td><td class="use">Both worlds, big data</td><td>Databricks/Delta, Iceberg</td></tr>
+</table>
+<div class="tip">Store columnar files as <strong>Parquet</strong>, not CSV — typed, compressed, and 5–100&times; faster to scan because engines read only the columns they need.</div>
+
+<div class="section-title">25.4 Batch vs streaming</div>
+<div class="dtree"><div class="dtree-label">how fresh must it be?</div><pre>Latency requirement?
+│
+├── Hours/daily is fine ─────────► <span class="leaf">Batch (scheduled jobs)</span>
+├── Minutes ─────────────────────► <span class="leaf">Micro-batch</span>
+└── Sub-second (fraud, alerts) ──► <span class="leaf">Streaming (Kafka, Flink, Spark Streaming)</span></pre></div>
+<div class="warn">Streaming is far more expensive to build and operate. Don't reach for it unless the business genuinely needs real-time. Most analytics is perfectly served by <strong>daily or hourly batch</strong>.</div>
+
+<div class="section-title">25.5 Orchestration — running pipelines reliably</div>
+<p>An orchestrator schedules tasks, enforces dependencies (a DAG), retries failures, and alerts you. Without one you have brittle cron jobs and silent failures.</p>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Airflow-style DAG: extract -> transform -> validate -> publish</span>
+extract &gt;&gt; transform &gt;&gt; validate &gt;&gt; publish
+<span class="cm"># each task: retries, timeout, on-failure alert; downstream waits for upstream</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<table class="ref">
+<tr><th>Tool</th><th class="use">Use when</th></tr>
+<tr><td>Airflow</td><td class="use">General-purpose, mature, Python DAGs</td></tr>
+<tr><td>dbt</td><td class="use">SQL transformations + tests + docs in the warehouse</td></tr>
+<tr><td>Dagster / Prefect</td><td class="use">Modern, asset-aware, better local dev</td></tr>
+<tr><td>Spark / Dask</td><td class="use">Data too big for one machine's RAM</td></tr>
+</table>
+
+<div class="section-title">25.6 When pandas stops scaling</div>
+<div class="dtree"><div class="dtree-label">data size</div><pre>Dataset size vs RAM?
+│
+├── Fits comfortably ──────────► <span class="leaf">pandas</span>
+├── Larger than RAM, 1 machine ► <span class="leaf">Polars / DuckDB (out-of-core)</span>
+└── Too big for 1 machine ─────► <span class="leaf">Spark / Dask / BigQuery</span></pre></div>
+<div class="rec-box"><h4>Professional recommendation</h4><div class="rec-grid">
+<div class="rec-item"><span class="rk">Default stack</span><span class="rv">ELT into a warehouse + dbt</span></div>
+<div class="rec-item"><span class="rk">File format</span><span class="rv">Parquet, partitioned</span></div>
+<div class="rec-item"><span class="rk">Orchestrate</span><span class="rv">Airflow / Dagster DAG</span></div>
+<div class="rec-item"><span class="rk">Big single-box</span><span class="rv">DuckDB or Polars</span></div>
+</div></div>
+
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes">
+<li>Building streaming when daily batch would do — huge cost, little value</li>
+<li>Storing analytical data as CSV instead of Parquet</li>
+<li>Cron jobs with no retries, alerting, or dependency management</li>
+<li>Transforming in fragile notebooks instead of tested dbt models</li>
+<li>Loading a 50 GB table into pandas instead of querying the warehouse</li>
+</ul>
+<div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid">
+<div class="cheat-item"><code>ELT</code> -> load raw, transform in warehouse</div>
+<div class="cheat-item"><code>.parquet</code> -> columnar, typed, compressed</div>
+<div class="cheat-item"><code>dbt run / dbt test</code> -> transform + validate</div>
+<div class="cheat-item"><code>DuckDB</code> -> SQL on local files, out-of-core</div>
+<div class="cheat-item"><code>DAG</code> -> task dependencies + retries</div>
+</div>
+<nav class="nav-footer"><a class="nav-btn" href="24-sql-for-analysts.html">&#8592; Previous</a><a class="nav-btn primary" href="26-ab-testing-and-experimentation.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistical Analysis — Data Analytics Notebook</title>
+<meta name="description" content="Use descriptive and inferential statistics to understand distributions, relationships, and test hypotheses.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/07-statistical-analysis.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Statistical Analysis — Data Analytics Notebook">
+<meta property="og:description" content="Use descriptive and inferential statistics to understand distributions, relationships, and test hypotheses.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/07-statistical-analysis.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Statistical Analysis — Data Analytics Notebook">
+<meta name="twitter:title" content="Statistical Analysis — Data Analytics Notebook">
+<meta name="twitter:description" content="Use descriptive and inferential statistics to understand distributions, relationships, and test hypotheses.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Statistical Analysis",
+  "description": "Use descriptive and inferential statistics to understand distributions, relationships, and test hypotheses.",
+  "url": "https://danotebook.protik.dev/chapters/07-statistical-analysis.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Core Workflow"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Core Workflow"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Statistical Analysis",
+    "item": "https://danotebook.protik.dev/chapters/07-statistical-analysis.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="07-statistical-analysis.html" data-num="7">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 07 — Statistics</div>
+<h1 class="ch-title">Statistical Analysis</h1>
+<p class="ch-desc">Use descriptive and inferential statistics to understand distributions, relationships, and test hypotheses.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+<div class="section-title">7.0 Test selection matrix</div>
+<table class="ref">
+<tr><th>Question type</th><th>Recommended method</th><th>Why</th><th>Skip / alternative</th></tr>
+<tr><td>Compare two numeric group means</td><td>T-test</td><td>Directly tests mean difference</td><td>If non-normal + small sample, use Mann-Whitney U</td></tr>
+<tr><td>Compare 3+ numeric groups</td><td>ANOVA</td><td>Controls error better than many t-tests</td><td>If assumptions fail, use Kruskal-Wallis</td></tr>
+<tr><td>Association of two categorical vars</td><td>Chi-square</td><td>Tests independence in contingency table</td><td>If expected counts are tiny, use Fisher exact (2x2)</td></tr>
+<tr><td>Linear numeric relationship</td><td>Pearson correlation</td><td>Measures linear association strength</td><td>Use Spearman for monotonic non-linear / ranked data</td></tr>
+<tr><td>Pre/post on same subjects</td><td>Paired t-test</td><td>Accounts for within-subject pairing</td><td>Use Wilcoxon signed-rank if non-normal</td></tr>
+</table>
+<div class="warn">Always check assumptions before claiming significance: independence, sample size, outliers, and distribution shape. Statistical significance is not business impact.</div>
+<div class="xforge"><span class="xf-tag">DataXForge</span>Run stats in the browser: <a href="https://dataxforge.com/tools/mean-median-mode" target="_blank" rel="noopener">Mean / Median / Mode</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/standard-deviation" target="_blank" rel="noopener">Standard Deviation</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/correlation-matrix" target="_blank" rel="noopener">Correlation Matrix</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/distribution-analysis" target="_blank" rel="noopener">Distribution Analysis</a> <span class="xf-sep">·</span> <a href="https://dataxforge.com/tools/z-score-calculator" target="_blank" rel="noopener">Z-Score Calculator</a>.</div>
+<div class="section-title">7.1 Descriptive statistics</div>
+<div class="note"><strong>Use descriptive statistics to understand the shape of the data before making conclusions.</strong> Mean and standard deviation are good for balanced numeric data. Median and percentiles are better when data is skewed. Mode is the best choice for categories or repeated values. If you are not sure which one to use, check the distribution first and decide based on whether the data has outliers.</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Central tendency</span>
+df[<span class="st">'salary'</span>].mean()
+df[<span class="st">'salary'</span>].median()
+df[<span class="st">'salary'</span>].mode()[0]
+
+<span class="cm"># Spread / dispersion</span>
+df[<span class="st">'salary'</span>].std()
+df[<span class="st">'salary'</span>].var()
+df[<span class="st">'salary'</span>].quantile([.10, .25, .5, .75, .90])
+df[<span class="st">'salary'</span>].max() - df[<span class="st">'salary'</span>].min()   <span class="cm"># range</span>
+
+<span class="cm"># Shape of distribution</span>
+df[<span class="st">'salary'</span>].skew()     <span class="cm"># >0 right-skewed, <0 left-skewed</span>
+df[<span class="st">'salary'</span>].kurtosis() <span class="cm"># >3 = heavy tails</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">7.2 Correlation analysis</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Pearson correlation matrix (linear relationships)</span>
+corr = df.select_dtypes(include=<span class="st">'number'</span>).corr()
+
+<span class="cm"># Visualize as heatmap</span>
+plt.figure(figsize=(10, 8))
+mask = np.triu(np.ones_like(corr, dtype=bool))  <span class="cm"># hide upper triangle</span>
+sns.heatmap(corr, annot=True, fmt=<span class="st">'.2f'</span>, cmap=<span class="st">'coolwarm'</span>,
+            center=0, mask=mask, square=True)
+plt.title(<span class="st">'Correlation Matrix'</span>)
+plt.tight_layout(); plt.show()
+
+<span class="cm"># Correlation with target variable only</span>
+corr[<span class="st">'target_col'</span>].sort_values(ascending=False)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">7.3 Hypothesis testing</div>
+<div class="note"><strong>Use tests when you need to compare groups or check whether a pattern is statistically reliable.</strong> T-tests compare two groups, ANOVA compares three or more groups, and chi-square tests are for categorical relationships. Do not use these tests just because they exist. Use them only when the question is about a difference, relationship, or association that you want to verify.</div>
+<div class="code-block"><div class="code-label">python</div><pre>from scipy import stats
+
+<span class="cm"># T-test: compare means of two groups</span>
+group_a = df[df[<span class="st">'group'</span>] == <span class="st">'A'</span>][<span class="st">'score'</span>]
+group_b = df[df[<span class="st">'group'</span>] == <span class="st">'B'</span>][<span class="st">'score'</span>]
+t_stat, p_val = stats.ttest_ind(group_a, group_b)
+<span class="fn">print</span>(<span class="st">f"t={t_stat:.3f}, p={p_val:.4f}"</span>)
+<span class="fn">print</span>(<span class="st">"Significant!"</span> if p_val < 0.05 else <span class="st">"Not significant"</span>)
+
+<span class="cm"># Chi-square test: categorical association</span>
+ct = pd.crosstab(df[<span class="st">'gender'</span>], df[<span class="st">'purchased'</span>])
+chi2, p, dof, expected = stats.chi2_contingency(ct)
+<span class="fn">print</span>(<span class="st">f"Chi2={chi2:.3f}, p={p:.4f}, dof={dof}"</span>)
+
+<span class="cm"># Normality test</span>
+stat, p = stats.normaltest(df[<span class="st">'salary'</span>].dropna())
+<span class="fn">print</span>(<span class="st">"Normal distribution?"</span>, <span class="st">"Yes"</span> if p > 0.05 else <span class="st">"No"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="note">p-value &lt; 0.05 = statistically significant at 95% confidence. p-value &lt; 0.01 = 99% confidence.</div>
+<div class="section-title">7.4 ANOVA — compare 3+ groups</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># One-way ANOVA</span>
+groups = [df[df[<span class="st">'dept'</span>] == d][<span class="st">'salary'</span>] for d in df[<span class="st">'dept'</span>].unique()]
+f_stat, p_val = stats.f_oneway(*groups)
+<span class="fn">print</span>(<span class="st">f"F={f_stat:.3f}, p={p_val:.4f}"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes"><li>Skipping business context before running technical steps</li><li>Not writing assumptions and limitations explicitly</li><li>Treating one metric as the full story</li></ul><div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid"><div class="cheat-item"><code>df.info()</code> -> Structure and non-null counts</div><div class="cheat-item"><code>df.describe()</code> -> Numeric summary statistics</div><div class="cheat-item"><code>df.isnull().sum()</code> -> Missing-value counts by column</div><div class="cheat-item"><code>df.groupby()</code> -> Segmented aggregation</div><div class="cheat-item"><code>pd.merge()</code> -> Join multiple datasets</div></div>
+<nav class="nav-footer"><a class="nav-btn" href="06-feature-engineering.html">&#8592; Previous</a><a class="nav-btn primary" href="08-data-visualization.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

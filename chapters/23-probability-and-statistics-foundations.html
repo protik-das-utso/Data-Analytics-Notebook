@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probability &amp; Statistics Foundations — Data Analytics Notebook</title>
+<meta name="description" content="The math under every model and test: distributions, the Central Limit Theorem, confidence intervals, bootstrapping, and what a p-value actually means.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/23-probability-and-statistics-foundations.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Probability &amp; Statistics Foundations — Data Analytics Notebook">
+<meta property="og:description" content="The math under every model and test: distributions, the Central Limit Theorem, confidence intervals, bootstrapping, and what a p-value actually means.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/23-probability-and-statistics-foundations.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Probability &amp; Statistics Foundations — Data Analytics Notebook">
+<meta name="twitter:title" content="Probability &amp; Statistics Foundations — Data Analytics Notebook">
+<meta name="twitter:description" content="The math under every model and test: distributions, the Central Limit Theorem, confidence intervals, bootstrapping, and what a p-value actually means.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Probability & Statistics Foundations",
+  "description": "The math under every model and test: distributions, the Central Limit Theorem, confidence intervals, bootstrapping, and what a p-value actually means.",
+  "url": "https://danotebook.protik.dev/chapters/23-probability-and-statistics-foundations.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Statistics & Experimentation"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Statistics & Experimentation"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Probability & Statistics Foundations",
+    "item": "https://danotebook.protik.dev/chapters/23-probability-and-statistics-foundations.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="23-probability-and-statistics-foundations.html" data-num="23">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 23 — Foundations</div>
+<h1 class="ch-title">Probability & Statistics Foundations</h1>
+<p class="ch-desc">The math under every model and test: distributions, the Central Limit Theorem, confidence intervals, bootstrapping, and what a p-value actually means.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+
+<div class="note">You don't need heavy math to be a great analyst — but you do need these intuitions. They explain <strong>why</strong> the methods in the rest of the handbook work, and stop you trusting numbers that lie.</div>
+
+<div class="section-title">23.1 Populations, samples & sampling error</div>
+<p>You almost never measure the whole population — you measure a <strong>sample</strong> and infer. The gap between your sample estimate and the truth is <strong>sampling error</strong>, and it shrinks as sample size grows.</p>
+<div class="dtree"><div class="dtree-label">core idea</div><pre>Population (unknown truth: mean &mu;, proportion p)
+        │  draw a random sample
+        ▼
+Sample statistic (x&#772;, p&#770;)  ── estimates ──►  Population parameter
+        │
+        └── uncertainty quantified by the <span class="branch">standard error</span>
+            SE = s / &radic;n   (smaller as n grows)</pre></div>
+
+<div class="section-title">23.2 Distributions you must recognise</div>
+<table class="ref">
+<tr><th>Distribution</th><th>Shape</th><th class="use">Models</th><th>Example</th></tr>
+<tr><td>Normal (Gaussian)</td><td>Symmetric bell</td><td class="use">Sums/averages of many effects</td><td>Heights, measurement error</td></tr>
+<tr><td>Binomial</td><td>Discrete counts</td><td class="use">k successes in n trials</td><td>Conversions out of N visitors</td></tr>
+<tr><td>Poisson</td><td>Right-skewed counts</td><td class="use">Rare events per interval</td><td>Support tickets per hour</td></tr>
+<tr><td>Log-normal</td><td>Right-skewed positive</td><td class="use">Multiplicative growth</td><td>Income, prices, session time</td></tr>
+<tr><td>Uniform</td><td>Flat</td><td class="use">Equal-likelihood values</td><td>Random IDs, dice</td></tr>
+<tr><td>Exponential</td><td>Decaying</td><td class="use">Time between events</td><td>Time to next purchase</td></tr>
+</table>
+<div class="tip">Before any mean-based method, plot a histogram. A right-skewed (log-normal) column means <strong>median over mean</strong> and often a <strong>log transform</strong>.</div>
+
+<div class="section-title">23.3 The Central Limit Theorem (CLT)</div>
+<p>The single most useful theorem in applied statistics: <strong>the distribution of the sample mean is approximately normal for large n, no matter the shape of the underlying data</strong>. This is why t-tests and confidence intervals work even on non-normal data.</p>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Even a skewed population yields a normal-looking mean distribution</span>
+import numpy as np
+pop = np.random.exponential(scale=<span class="num">2.0</span>, size=<span class="num">1_000_000</span>)   <span class="cm"># very skewed</span>
+means = [np.random.choice(pop, <span class="num">50</span>).mean() <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="num">5000</span>)]
+print(np.mean(means), np.std(means))   <span class="cm"># ~normal, centred on the true mean</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+
+<div class="section-title">23.4 Confidence intervals — report ranges, not points</div>
+<p>A 95% confidence interval means: if you repeated the study many times, ~95% of such intervals would contain the true value. Always prefer "12.4% &plusmn; 1.1%" to a bare "12.4%".</p>
+<div class="code-block"><div class="code-label">python</div><pre>from scipy import stats
+import numpy as np
+data = np.array([...])
+mean = data.mean()
+se = stats.sem(data)                       <span class="cm"># standard error</span>
+ci = stats.t.interval(<span class="num">0.95</span>, len(data)-<span class="num">1</span>, loc=mean, scale=se)
+print(<span class="st">f"mean={mean:.2f}  95% CI={ci}"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+
+<div class="section-title">23.5 Bootstrapping — CIs for anything</div>
+<p>When a metric has no neat formula (median, a ratio, an AUC), <strong>resample with replacement</strong> thousands of times and read the percentiles. No distribution assumptions.</p>
+<div class="dtree"><div class="dtree-label">bootstrap flow</div><pre>Original sample (n rows)
+   │  repeat B = 10,000 times
+   ▼
+Resample n rows WITH replacement  ──►  compute statistic
+   │
+   └── collect B statistics ──► 2.5th & 97.5th percentile = <span class="leaf">95% CI</span></pre></div>
+<div class="code-block"><div class="code-label">python</div><pre>import numpy as np
+boot = [np.median(np.random.choice(data, len(data), replace=<span class="kw">True</span>))
+        <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="num">10_000</span>)]
+lo, hi = np.percentile(boot, [<span class="num">2.5</span>, <span class="num">97.5</span>])
+print(<span class="st">f"median 95% CI: [{lo:.2f}, {hi:.2f}]"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+
+<div class="section-title">23.6 What a p-value really is (and isn't)</div>
+<div class="gb-grid">
+<div class="gb-card gb-good"><h5>It IS</h5>The probability of seeing data this extreme <em>if the null hypothesis were true</em>. Small p = data is surprising under "no effect".</div>
+<div class="gb-card gb-bad"><h5>It is NOT</h5>The probability the hypothesis is true. NOT the size or importance of the effect. NOT "p=0.04 means 96% sure".</div>
+</div>
+<div class="warn">Statistical significance &ne; practical significance. With huge n, a meaningless 0.1% lift can be "significant". Always pair the p-value with an <strong>effect size</strong> and a <strong>confidence interval</strong>.</div>
+
+<div class="section-title">23.7 Type I / Type II errors & power</div>
+<table class="ref">
+<tr><th></th><th>Reality: no effect</th><th>Reality: real effect</th></tr>
+<tr><td><strong>Test says effect</strong></td><td class="avoid">Type I error (&alpha;, false positive)</td><td class="use">Correct (power = 1&minus;&beta;)</td></tr>
+<tr><td><strong>Test says nothing</strong></td><td class="use">Correct</td><td class="avoid">Type II error (&beta;, false negative)</td></tr>
+</table>
+<div class="rec-box"><h4>Professional recommendation</h4><div class="rec-grid">
+<div class="rec-item"><span class="rk">Report</span><span class="rv">Estimate + 95% CI + effect size</span></div>
+<div class="rec-item"><span class="rk">Skewed metric</span><span class="rv">Bootstrap the CI</span></div>
+<div class="rec-item"><span class="rk">Significance</span><span class="rv">&alpha; = 0.05, but pre-register it</span></div>
+<div class="rec-item"><span class="rk">Power target</span><span class="rv">80%+ (plan n up front)</span></div>
+</div></div>
+
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes">
+<li>Reporting a point estimate with no uncertainty (no CI)</li>
+<li>Reading a p-value as "probability the hypothesis is true"</li>
+<li>Confusing statistical significance with business importance</li>
+<li>Using mean + std on a clearly skewed (log-normal) variable</li>
+<li>Running until significant ("peeking") instead of fixing n in advance</li>
+</ul>
+<div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid">
+<div class="cheat-item"><code>stats.sem(x)</code> -> standard error of the mean</div>
+<div class="cheat-item"><code>stats.t.interval(0.95, n-1, loc, scale)</code> -> confidence interval</div>
+<div class="cheat-item"><code>np.percentile(boot, [2.5, 97.5])</code> -> bootstrap CI</div>
+<div class="cheat-item"><code>stats.norm / binom / poisson</code> -> distribution objects</div>
+<div class="cheat-item"><code>effect size + CI</code> -> always report alongside p</div>
+</div>
+<nav class="nav-footer"><a class="nav-btn" href="22-ai-and-llm-analytics.html">&#8592; Previous</a><a class="nav-btn primary" href="24-sql-for-analysts.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

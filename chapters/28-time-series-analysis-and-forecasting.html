@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Series Analysis &amp; Forecasting — Data Analytics Notebook</title>
+<meta name="description" content="Ordered data breaks the i.i.d. assumption. Stationarity, decomposition, ARIMA vs Prophet vs ML, time-aware validation, and forecasting metrics.">
+<link rel="canonical" href="https://danotebook.protik.dev/chapters/28-time-series-analysis-and-forecasting.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Time Series Analysis &amp; Forecasting — Data Analytics Notebook">
+<meta property="og:description" content="Ordered data breaks the i.i.d. assumption. Stationarity, decomposition, ARIMA vs Prophet vs ML, time-aware validation, and forecasting metrics.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:secure_url" content="https://danotebook.protik.dev/share-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://danotebook.protik.dev/chapters/28-time-series-analysis-and-forecasting.html">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Time Series Analysis &amp; Forecasting — Data Analytics Notebook">
+<meta name="twitter:title" content="Time Series Analysis &amp; Forecasting — Data Analytics Notebook">
+<meta name="twitter:description" content="Ordered data breaks the i.i.d. assumption. Stationarity, decomposition, ARIMA vs Prophet vs ML, time-aware validation, and forecasting metrics.">
+<meta name="twitter:image" content="https://danotebook.protik.dev/share-image.jpg">
+<script type="application/ld+json">
+[
+ {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Time Series Analysis & Forecasting",
+  "description": "Ordered data breaks the i.i.d. assumption. Stationarity, decomposition, ARIMA vs Prophet vs ML, time-aware validation, and forecasting metrics.",
+  "url": "https://danotebook.protik.dev/chapters/28-time-series-analysis-and-forecasting.html",
+  "image": "https://danotebook.protik.dev/share-image.jpg",
+  "author": {
+   "@type": "Person",
+   "name": "Protik Das Utso",
+   "url": "https://danotebook.protik.dev"
+  },
+  "publisher": {
+   "@type": "Organization",
+   "name": "Data Analytics Notebook",
+   "logo": {
+    "@type": "ImageObject",
+    "url": "https://danotebook.protik.dev/assets/images/profile.jpg"
+   }
+  },
+  "isPartOf": {
+   "@type": "WebSite",
+   "name": "Data Analytics Notebook",
+   "url": "https://danotebook.protik.dev/"
+  },
+  "articleSection": "Time Series"
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   {
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "https://danotebook.protik.dev/"
+   },
+   {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Time Series"
+   },
+   {
+    "@type": "ListItem",
+    "position": 3,
+    "name": "Time Series Analysis & Forecasting",
+    "item": "https://danotebook.protik.dev/chapters/28-time-series-analysis-and-forecasting.html"
+   }
+  ]
+ }
+]
+</script>
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-slug="28-time-series-analysis-and-forecasting.html" data-num="28">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Chapter 28 — Time Series</div>
+<h1 class="ch-title">Time Series Analysis & Forecasting</h1>
+<p class="ch-desc">Ordered data breaks the i.i.d. assumption. Stationarity, decomposition, ARIMA vs Prophet vs ML, time-aware validation, and forecasting metrics.</p>
+<div class="chapter-meta" id="chapterMeta"></div>
+
+<div class="note">Time series data has memory and seasonality — the past predicts the future and rows are <strong>not</strong> independent. Standard train/test splitting and cross-validation will silently leak the future into the past.</div>
+
+<div class="section-title">28.1 The four components</div>
+<div class="dtree"><div class="dtree-label">decomposition</div><pre>Observed series  =
+   <span class="branch">Trend</span>        (long-term direction)
+ + <span class="branch">Seasonality</span>  (fixed-period cycles: weekly, yearly)
+ + <span class="branch">Cyclic</span>       (irregular multi-year swings)
+ + <span class="branch">Residual</span>     (noise)</pre></div>
+<div class="code-block"><div class="code-label">python</div><pre>from statsmodels.tsa.seasonal import seasonal_decompose
+result = seasonal_decompose(series, model=<span class="st">'additive'</span>, period=<span class="num">12</span>)
+result.plot()   <span class="cm"># trend, seasonal, residual panels</span></pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+
+<div class="section-title">28.2 Stationarity — most models require it</div>
+<p>A stationary series has constant mean/variance over time. Trends and seasonality must be removed (differencing) before ARIMA-type models.</p>
+<div class="dtree"><div class="dtree-label">make it stationary</div><pre>Is the series stationary? (ADF test p &lt; 0.05?)
+│
+├── YES ──────────────────► model directly
+└── NO
+    ├── trend ───────────► <span class="leaf">difference: y[t] − y[t−1]</span>
+    ├── seasonality ─────► <span class="leaf">seasonal difference (lag = period)</span>
+    └── growing variance ► <span class="leaf">log transform</span></pre></div>
+<div class="code-block"><div class="code-label">python</div><pre>from statsmodels.tsa.stattools import adfuller
+p = adfuller(series.dropna())[<span class="num">1</span>]
+print(<span class="st">"stationary"</span> <span class="kw">if</span> p &lt; <span class="num">0.05</span> <span class="kw">else</span> <span class="st">"needs differencing"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+
+<div class="section-title">28.3 Choosing a forecasting approach</div>
+<div class="dtree"><div class="dtree-label">model selection</div><pre>What fits your problem?
+│
+├── Simple baseline first ──────────► <span class="leaf">Naive / seasonal-naive</span>
+├── Clear trend + seasonality, 1 series ► <span class="leaf">SARIMA / ETS</span>
+├── Strong seasonality, holidays, gaps ──► <span class="leaf">Prophet</span>
+├── Many series + rich features ────────► <span class="leaf">LightGBM on lag features</span>
+└── Long horizon, lots of data ─────────► <span class="leaf">Deep models (N-BEATS, TFT)</span></pre></div>
+<table class="ref">
+<tr><th>Method</th><th class="use">Strength</th><th class="avoid">Weakness</th></tr>
+<tr><td>Seasonal-naive</td><td class="use">Free baseline, hard to beat</td><td class="avoid">No trend adaptation</td></tr>
+<tr><td>SARIMA</td><td class="use">Principled, interpretable</td><td class="avoid">Manual tuning, one series</td></tr>
+<tr><td>Prophet</td><td class="use">Holidays, robust, easy</td><td class="avoid">Can over-smooth</td></tr>
+<tr><td>LightGBM + lags</td><td class="use">Features, many series, accuracy</td><td class="avoid">Needs careful feature design</td></tr>
+</table>
+
+<div class="section-title">28.4 Feature engineering for ML forecasts</div>
+<div class="code-block"><div class="code-label">python</div><pre><span class="cm"># Lags, rolling stats, and calendar features — the bread and butter</span>
+df[<span class="st">'lag_7'</span>]   = df[<span class="st">'y'</span>].shift(<span class="num">7</span>)
+df[<span class="st">'roll_28'</span>] = df[<span class="st">'y'</span>].shift(<span class="num">1</span>).rolling(<span class="num">28</span>).mean()
+df[<span class="st">'dow'</span>]     = df[<span class="st">'date'</span>].dt.dayofweek
+df[<span class="st">'month'</span>]   = df[<span class="st">'date'</span>].dt.month</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div class="warn">Every lag/rolling feature must use only <strong>past</strong> values (note the <code>.shift(1)</code> before rolling). A rolling mean that includes the current row leaks the target.</div>
+
+<div class="section-title">28.5 Time-aware validation</div>
+<div class="gb-grid">
+<div class="gb-card gb-bad"><h5>Wrong</h5>Random K-fold shuffles time — the model trains on the future to predict the past. Scores look great, production fails.</div>
+<div class="gb-card gb-good"><h5>Correct</h5>Expanding/rolling window: always train on past, validate on the next slice forward.<br><code>TimeSeriesSplit(n_splits=5)</code></div>
+</div>
+<div class="dtree"><div class="dtree-label">rolling-origin validation</div><pre>Fold 1: train[----]      test[--]
+Fold 2: train[------]    test[--]
+Fold 3: train[--------]  test[--]
+        (always forward in time)</pre></div>
+
+<div class="section-title">28.6 Forecasting metrics</div>
+<table class="ref">
+<tr><th>Metric</th><th class="use">Use when</th><th class="avoid">Avoid when</th></tr>
+<tr><td>MAE</td><td class="use">Robust, same units</td><td class="avoid">Big errors must dominate</td></tr>
+<tr><td>RMSE</td><td class="use">Penalize large misses</td><td class="avoid">Many legit spikes</td></tr>
+<tr><td>MAPE</td><td class="use">% error, cross-series compare</td><td class="avoid">Values near/at zero</td></tr>
+<tr><td>sMAPE / WAPE</td><td class="use">Fixes MAPE's zero problem</td><td class="avoid">—</td></tr>
+</table>
+<div class="rec-box"><h4>Professional recommendation</h4><div class="rec-grid">
+<div class="rec-item"><span class="rk">Always</span><span class="rv">Beat seasonal-naive first</span></div>
+<div class="rec-item"><span class="rk">Validate</span><span class="rv">Rolling-origin (no shuffle)</span></div>
+<div class="rec-item"><span class="rk">Quick + robust</span><span class="rv">Prophet / ETS</span></div>
+<div class="rec-item"><span class="rk">Max accuracy</span><span class="rv">LightGBM on lag features</span></div>
+</div></div>
+
+<div class="section-title">Common mistakes to avoid</div>
+<ul class="mistakes">
+<li>Random K-fold on time series (leaks the future)</li>
+<li>Rolling features that include the current row</li>
+<li>Skipping the naive baseline and over-engineering</li>
+<li>Using MAPE on series with zeros</li>
+<li>Ignoring stationarity before ARIMA</li>
+</ul>
+<div class="section-title">Quick cheatsheet</div>
+<div class="cheat-grid">
+<div class="cheat-item"><code>seasonal_decompose()</code> -> trend/seasonal/resid</div>
+<div class="cheat-item"><code>adfuller()</code> -> stationarity test</div>
+<div class="cheat-item"><code>TimeSeriesSplit()</code> -> forward validation</div>
+<div class="cheat-item"><code>.shift(1).rolling(n)</code> -> leak-safe rolling</div>
+<div class="cheat-item"><code>Prophet()</code> -> quick robust forecast</div>
+</div>
+<nav class="nav-footer"><a class="nav-btn" href="27-causal-inference.html">&#8592; Previous</a><a class="nav-btn primary" href="29-model-validation-and-hyperparameter-tuning.html">Next &#8594;</a></nav>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="../assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="../assets/chapters.js"></script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>
