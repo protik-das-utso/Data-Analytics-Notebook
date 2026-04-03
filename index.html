@@ -4,11 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Data Analytics Notebook</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Data Analytics Notebook">
+<meta property="og:description" content="A complete, chapter-based data analytics notebook and learning system.">
+<meta property="og:image" content="share-image.png">
+<meta property="og:image:alt" content="Data Analytics Notebook preview image">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:title" content="Data Analytics Notebook">
+<meta property="twitter:description" content="A complete, chapter-based data analytics notebook and learning system.">
+<meta property="twitter:image" content="share-image.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap');
 :root{--font-ui:'Manrope','Segoe UI',Aptos,'Helvetica Neue',sans-serif;--font-display:'Sora','Manrope','Segoe UI',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-ui);font-size:15px;background:radial-gradient(circle at top left,rgba(56,189,248,.16),transparent 24%),radial-gradient(circle at 85% 8%,rgba(168,85,247,.14),transparent 22%),radial-gradient(circle at bottom left,rgba(34,197,94,.12),transparent 20%),linear-gradient(180deg,#060912 0%,#0b1020 38%,#0f172a 100%);color:#e2e8f0;display:flex;min-height:100vh;position:relative;overflow-x:hidden;overflow-y:auto;background-attachment:fixed}
+body{font-family:var(--font-ui);font-size:15px;background:radial-gradient(circle at top left,rgba(56,189,248,.16),transparent 24%),radial-gradient(circle at 85% 8%,rgba(168,85,247,.14),transparent 22%),radial-gradient(circle at bottom left,rgba(34,197,94,.12),transparent 20%),linear-gradient(180deg,#060912 0%,#0b1020 38%,#0f172a 100%);color:#e2e8f0;display:block;min-height:100vh;position:relative;overflow-x:hidden;overflow-y:auto;background-attachment:fixed}
 body::before,body::after{content:'';position:fixed;border-radius:999px;pointer-events:none;z-index:0;filter:blur(36px);opacity:.5}
 body::before{width:30vw;height:30vw;top:-10vw;right:-8vw;background:radial-gradient(circle,rgba(59,130,246,.3),rgba(59,130,246,0) 70%)}
 body::after{width:22vw;height:22vw;bottom:2vw;left:-6vw;background:radial-gradient(circle,rgba(34,197,94,.22),rgba(34,197,94,0) 70%)}
@@ -35,6 +44,14 @@ body::after{width:22vw;height:22vw;bottom:2vw;left:-6vw;background:radial-gradie
 .nav-num{font-size:11px;color:#7c8aa3;min-width:20px;font-family:'Courier New',monospace;font-weight:700}
 .nav-item.active .nav-num{color:#7dd3fc}
 .content{flex:1;min-width:0;margin-left:280px;padding:clamp(1.25rem,2vw,2.4rem);width:calc(100vw - 280px);max-width:none;position:relative;z-index:1;display:flex;flex-direction:column;gap:1.2rem}
+.site-footer{margin-left:280px;padding:1rem clamp(1.25rem,2vw,2.4rem) 1.35rem;border-top:1px solid rgba(148,163,184,.18);display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;background:linear-gradient(180deg,rgba(15,23,42,.66),rgba(10,14,24,.82));backdrop-filter:blur(8px)}
+.footer-profile{display:flex;align-items:center;gap:.7rem}
+.footer-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(125,211,252,.45);box-shadow:0 10px 24px rgba(2,6,23,.28)}
+.site-credit{font-size:13px;color:#cbd5e1}
+.site-credit strong{color:#f8fafc}
+.wa-link{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .75rem;border-radius:999px;border:1px solid rgba(74,222,128,.48);background:rgba(22,163,74,.16);color:#dcfce7;text-decoration:none;font-size:12.5px;font-weight:700;transition:all .15s ease}
+.wa-link:hover{background:rgba(22,163,74,.3);transform:translateY(-1px)}
+.wa-icon{width:16px;height:16px;display:inline-block;vertical-align:middle}
 .chapter{display:none;width:100%;background:linear-gradient(180deg,rgba(15,23,42,.9),rgba(10,14,24,.84));border:1px solid rgba(148,163,184,.16);border-radius:30px;padding:2rem 2rem 1.6rem;box-shadow:0 28px 80px rgba(2,6,23,.42),inset 0 1px 0 rgba(255,255,255,.03);backdrop-filter:blur(14px);position:relative;overflow:hidden}
 .chapter::before{content:'';position:absolute;inset:0 0 auto 0;height:5px;background:linear-gradient(90deg,#38bdf8,#22c55e,#a855f7)}
 .chapter.active{display:block}
@@ -155,6 +172,12 @@ body.light-theme .nav-btn.primary{background:rgba(37,99,235,.12);color:#1d4ed8;b
 body.light-theme .nav-btn.primary:hover{background:rgba(37,99,235,.2)}
 body.light-theme .meta-btn{background:#ffffff;color:#334155;border-color:#cbd5e1}
 body.light-theme .meta-btn:hover{color:#0f172a;border-color:#60a5fa}
+body.light-theme .site-footer{background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(241,245,249,.96));border-top-color:#cbd5e1}
+body.light-theme .footer-avatar{border-color:rgba(37,99,235,.32);box-shadow:0 8px 20px rgba(148,163,184,.26)}
+body.light-theme .site-credit{color:#334155}
+body.light-theme .site-credit strong{color:#0f172a}
+body.light-theme .wa-link{color:#166534;background:rgba(74,222,128,.2);border-color:rgba(22,163,74,.38)}
+body.light-theme .wa-link:hover{background:rgba(74,222,128,.3)}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:#0f1117}
 ::-webkit-scrollbar-thumb{background:#364152;border-radius:3px}
@@ -163,6 +186,7 @@ body.light-theme .meta-btn:hover{color:#0f172a;border-color:#60a5fa}
     .sidebar{position:relative;width:100%;min-width:0;height:auto;border-right:none;border-bottom:1px solid rgba(148,163,184,.14)}
     .progress-wrap{left:0}
     .content{margin-left:0;width:100%;padding:1rem}
+    .site-footer{margin-left:0;padding:1rem}
     .chapter{border-radius:22px;padding:1.3rem}
     .workflow{grid-template-columns:1fr}
 }
@@ -193,6 +217,18 @@ body.light-theme .meta-btn:hover{color:#0f172a;border-color:#60a5fa}
   <div id="nav"></div>
 </div>
 <div class="content" id="chapters"></div>
+<footer class="site-footer">
+    <div class="footer-profile">
+        <img class="footer-avatar" src="https://scontent.fdac177-1.fna.fbcdn.net/v/t39.30808-1/654209817_122096474258949277_1988133739200371372_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=107&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeEfLkF1caXV9C-Yr52bvKUSNKjawONel7Y0qNrA416Xtp_0dN95BKE7SNhJln4pnLJzGT5Y6z00X2jc4JGWJ1qP&_nc_ohc=YICfam1PMBEQ7kNvwHRUu2n&_nc_oc=AdotHglhi8Jq3zgCg8vTigDECV75_b9wgIrjw-bPd8VEApCcCYh_8XwaLs22efejl78&_nc_zt=24&_nc_ht=scontent.fdac177-1.fna&_nc_gid=YNuRsvgui_nKmsus-7MmAQ&_nc_ss=7a3a8&oh=00_Af0istVH83thMuJYPSHc2NFF2161cFmxrUj8sjE5TLeNOQ&oe=69D5D610" alt="Profile photo">
+        <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+    </div>
+    <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+        <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/>
+        </svg>
+        WhatsApp: +880 1883 044415
+    </a>
+</footer>
 
 <script>
 const chapters = [
