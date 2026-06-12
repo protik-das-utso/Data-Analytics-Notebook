@@ -281,3 +281,11 @@ window.CHAPTERS = [
  }
 ];
 window.GROUPS = ["Foundations","Core Workflow","Data & SQL","Statistics & Experimentation","Time Series","Modeling","Decision Guides","Delivery","Advanced"];
+/* Interactive tools (root-level pages, shown above the chapters in the sidebar) */
+window.TOOLS = [
+ { title: "Decision Assistant", desc: "Answer a few questions about your data and goal — get a reasoned recommendation.", file: "decision-assistant.html", icon: "⚡" },
+ { title: "Learning Roadmap", desc: "An ordered path from beginner to job-ready, tracking your own progress.", file: "roadmap.html", icon: "🗺" },
+ { title: "Glossary", desc: "Plain-English definitions of every key term, also shown as tooltips in chapters.", file: "glossary.html", icon: "📖" },
+ { title: "Python Playground", desc: "Run pandas & numpy in your browser — edit and execute snippets live.", file: "playground-python.html", icon: "🐍" },
+ { title: "SQL Playground", desc: "Query a sample database in your browser — joins, GROUP BY, CTEs, windows.", file: "playground-sql.html", icon: "🗄" }
+];

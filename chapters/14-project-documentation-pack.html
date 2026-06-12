@@ -119,6 +119,13 @@
 <li>Privacy-sensitive columns are masked or removed</li>
 </ul>
 <div class="section-title">14.3 Markdown starter templates</div>
+<div class="doc-tool">
+<label for="docTemplate">Generate a starter file:</label>
+<select id="docTemplate" class="doc-select" aria-label="Documentation template"><option value="readme">README template</option><option value="dictionary">Data dictionary template</option><option value="analysis">Analysis log template</option></select>
+<button id="copyDocTemplate" class="nav-btn">Copy</button>
+<button id="downloadDocTemplate" class="nav-btn primary">Save .md</button>
+<span class="dt-note">Pick a template, then copy it or download it as a <code>.md</code> file to drop into a new project.</span>
+</div>
 <div class="code-block"><div class="code-label">README.md skeleton</div><pre># Project Title
 
 ## Business Question
@@ -153,7 +160,7 @@
 | order_date | transaction date | datetime | yyyy-mm-dd | valid dates | drop if null |
 | revenue | order revenue | float | USD | >= 0 | fill 0 if missing |
 </pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-<div class="tip">Use the sidebar template tools to copy or save these documents quickly for every new project.</div>
+<div class="tip">Use the template generator at the top of this section to copy or save these documents quickly for every new project.</div>
 <div class="section-title">Common mistakes to avoid</div>
 <ul class="mistakes"><li>Skipping business context before running technical steps</li><li>Not writing assumptions and limitations explicitly</li><li>Treating one metric as the full story</li></ul><div class="section-title">Quick cheatsheet</div>
 <div class="cheat-grid"><div class="cheat-item"><code>df.info()</code> -> Structure and non-null counts</div><div class="cheat-item"><code>df.describe()</code> -> Numeric summary statistics</div><div class="cheat-item"><code>df.isnull().sum()</code> -> Missing-value counts by column</div><div class="cheat-item"><code>df.groupby()</code> -> Segmented aggregation</div><div class="cheat-item"><code>pd.merge()</code> -> Join multiple datasets</div></div>

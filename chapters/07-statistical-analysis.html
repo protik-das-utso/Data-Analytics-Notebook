@@ -136,6 +136,7 @@ plt.tight_layout(); plt.show()
 
 <span class="cm"># Correlation with target variable only</span>
 corr[<span class="st">'target_col'</span>].sort_values(ascending=False)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+<div data-calc="correlation"></div>
 <div class="section-title">7.3 Hypothesis testing</div>
 <div class="note"><strong>Use tests when you need to compare groups or check whether a pattern is statistically reliable.</strong> T-tests compare two groups, ANOVA compares three or more groups, and chi-square tests are for categorical relationships. Do not use these tests just because they exist. Use them only when the question is about a difference, relationship, or association that you want to verify.</div>
 <div class="code-block"><div class="code-label">python</div><pre>from scipy import stats
@@ -179,5 +180,6 @@ f_stat, p_val = stats.f_oneway(*groups)
 </footer>
 <script src="../assets/chapters.js"></script>
 <script src="../assets/nav.js"></script>
+<script src="../assets/calculators.js"></script>
 </body>
 </html>

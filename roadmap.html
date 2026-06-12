@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Roadmap — Data Analytics Notebook</title>
+<meta name="description" content="A guided, ordered learning path from beginner to job-ready data analyst. Eleven stages across all 35 chapters, tied to your own progress so you always know what to study next.">
+<link rel="canonical" href="https://danotebook.protik.dev/roadmap.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Learning Roadmap — Data Analytics Notebook">
+<meta property="og:description" content="A guided, ordered path from beginner to job-ready data analyst, tied to your own progress.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:url" content="https://danotebook.protik.dev/roadmap.html">
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="manifest" href="./site.webmanifest">
+<link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body data-slug="" data-num="0">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Guided Path</div>
+<h1 class="ch-title">Learning Roadmap</h1>
+<p class="ch-desc">A clear order to learn in &mdash; from your first import to a job-ready analyst. Eleven stages cover all 35 chapters. Mark chapters complete as you go (on each chapter page) and this roadmap tracks your progress and always tells you what to study next.</p>
+<div id="roadmap"></div>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="./assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="./assets/chapters.js"></script>
+<script src="./assets/nav.js"></script>
+<script>
+(function () {
+  var CH = window.CHAPTERS || [];
+  var byNum = {};
+  CH.forEach(function (c) { byNum[c.num] = c; });
+  var completed = [];
+  try { completed = JSON.parse(localStorage.getItem('da_notebook_completed')) || []; } catch (e) {}
+  function isDone(file) { return completed.indexOf(file) !== -1; }
+
+  var STAGES = [
+    { t: 'Set up & get data', g: 'Install your toolkit and pull data from any source. Everything starts here.', ch: [1, 2] },
+    { t: 'Understand & clean', g: 'Explore the dataset, then fix missing values, duplicates, outliers and types — the bulk of real work.', ch: [3, 4, 5] },
+    { t: 'Statistics foundations', g: 'The reasoning under every chart and model: distributions, inference, and choosing the right test.', ch: [23, 7, 16] },
+    { t: 'Visualize & communicate', g: 'Turn numbers into charts that answer a question, and findings into a story stakeholders act on.', ch: [8, 11] },
+    { t: 'SQL & data engineering', g: 'The #1 daily tool plus where data actually lives and flows. Non-negotiable for the job.', ch: [24, 25] },
+    { t: 'Features & decisions', g: 'Engineer better inputs and use the decision matrix to choose methods with reasons, not habit.', ch: [6, 15] },
+    { t: 'Machine learning core', g: 'Build, choose, evaluate and validate predictive models the right way.', ch: [9, 17, 10, 29] },
+    { t: 'Trustworthy modeling', g: 'Avoid the traps that make models look great offline and fail in production.', ch: [20, 30, 32, 18, 19] },
+    { t: 'Experiments & time', g: 'Prove cause and effect: A/B tests, causal inference, and forecasting ordered data.', ch: [26, 27, 28] },
+    { t: 'Advanced & AI', g: 'Unsupervised learning, text, deep learning, LLM analytics, MLOps and reproducible tooling.', ch: [31, 33, 34, 22, 21, 35] },
+    { t: 'Career & delivery', g: 'Ship professionally and turn the work into an interview-ready portfolio.', ch: [12, 13, 14] }
+  ];
+
+  // overall + next chapter to study (first incomplete in roadmap order)
+  var order = [];
+  STAGES.forEach(function (s) { s.ch.forEach(function (n) { if (byNum[n]) order.push(byNum[n]); }); });
+  var total = order.length;
+  var doneCount = order.filter(function (c) { return isDone(c.file); }).length;
+  var pct = total ? Math.round(doneCount / total * 100) : 0;
+  var next = null;
+  for (var i = 0; i < order.length; i++) { if (!isDone(order[i].file)) { next = order[i]; break; } }
+
+  var root = document.getElementById('roadmap');
+  var h = '';
+
+  // CTA
+  if (next) {
+    h += '<div class="rm-cta"><div style="flex:1;min-width:200px"><b>' + (doneCount ? 'Continue where you left off' : 'Start here') + '</b><div style="font-size:13px;color:var(--ink2);margin-top:.25rem">Chapter ' + (next.num < 10 ? '0' + next.num : next.num) + ' &middot; ' + next.title + '</div></div>' +
+      '<a class="da-rlink" href="chapters/' + next.file + '">' + (doneCount ? 'Resume' : 'Begin') + ' &rarr;</a></div>';
+  } else if (total) {
+    h += '<div class="rm-cta"><div style="flex:1"><b>&#127881; Every chapter complete</b><div style="font-size:13px;color:var(--ink2);margin-top:.25rem">You have worked through the whole handbook. Revisit the Decision Assistant whenever you start a new project.</div></div><a class="da-rlink" href="decision-assistant.html">Decision Assistant &rarr;</a></div>';
+  }
+
+  // summary stats
+  h += '<div class="rm-summary">' +
+    '<div class="rm-stat"><div class="rm-big">' + pct + '%</div><div class="rm-lbl">Overall progress</div><div class="rm-bar"><i style="width:' + pct + '%"></i></div></div>' +
+    '<div class="rm-stat"><div class="rm-big">' + doneCount + '<span style="font-size:16px;color:var(--ink3)"> / ' + total + '</span></div><div class="rm-lbl">Chapters completed</div></div>' +
+    '<div class="rm-stat"><div class="rm-big">' + STAGES.length + '</div><div class="rm-lbl">Stages to job-ready</div></div>' +
+    '</div>';
+
+  // stages
+  STAGES.forEach(function (s, si) {
+    var items = s.ch.map(function (n) { return byNum[n]; }).filter(Boolean);
+    var sd = items.filter(function (c) { return isDone(c.file); }).length;
+    var sp = items.length ? Math.round(sd / items.length * 100) : 0;
+    var allDone = sd === items.length && items.length > 0;
+    h += '<section class="rm-stage' + (allDone ? ' done' : '') + '">';
+    h += '<div class="rm-stage-head"><span class="rm-stage-num">Stage ' + (si + 1) + '</span><h3>' + s.t + '</h3>' +
+      '<span class="rm-stage-pct">' + sd + '/' + items.length + ' &middot; ' + sp + '%</span></div>';
+    h += '<div class="rm-stage-goal">' + s.g + '</div>';
+    h += '<div class="rm-items">';
+    items.forEach(function (c) {
+      var d = isDone(c.file);
+      h += '<a class="rm-item' + (d ? ' done' : '') + '" href="chapters/' + c.file + '">' +
+        '<span class="rm-check">&#10003;</span>' +
+        '<span><span class="rm-it-num">Ch ' + (c.num < 10 ? '0' + c.num : c.num) + '</span><br><span class="rm-it-title">' + c.title + '</span></span></a>';
+    });
+    h += '</div></section>';
+  });
+
+  root.innerHTML = h;
+})();
+</script>
+</body>
+</html>

@@ -124,6 +124,7 @@ es = proportion_effectsize(target, baseline)
 n = NormalIndPower().solve_power(effect_size=es, alpha=<span class="num">0.05</span>, power=<span class="num">0.8</span>, alternative=<span class="st">'two-sided'</span>)
 print(<span class="st">f"need ~{n:.0f} users per arm"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
 
+<div data-calc="ab-sample-size"></div>
 <div class="section-title">26.4 Analyzing the result</div>
 <table class="ref">
 <tr><th>Metric type</th><th>Test</th><th>Report</th></tr>
@@ -193,5 +194,6 @@ print(<span class="st">f"lift={ (conv[1]/n[1]-conv[0]/n[0])*100:.2f }pp  p={p:.4
 </footer>
 <script src="../assets/chapters.js"></script>
 <script src="../assets/nav.js"></script>
+<script src="../assets/calculators.js"></script>
 </body>
 </html>

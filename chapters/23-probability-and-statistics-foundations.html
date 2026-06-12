@@ -138,6 +138,7 @@ se = stats.sem(data)                       <span class="cm"># standard error</sp
 ci = stats.t.interval(<span class="num">0.95</span>, len(data)-<span class="num">1</span>, loc=mean, scale=se)
 print(<span class="st">f"mean={mean:.2f}  95% CI={ci}"</span>)</pre><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
 
+<div data-calc="confidence-interval"></div>
 <div class="section-title">23.5 Bootstrapping — CIs for anything</div>
 <p>When a metric has no neat formula (median, a ratio, an AUC), <strong>resample with replacement</strong> thousands of times and read the percentiles. No distribution assumptions.</p>
 <div class="dtree"><div class="dtree-label">bootstrap flow</div><pre>Original sample (n rows)
@@ -203,5 +204,6 @@ print(<span class="st">f"median 95% CI: [{lo:.2f}, {hi:.2f}]"</span>)</pre><butt
 </footer>
 <script src="../assets/chapters.js"></script>
 <script src="../assets/nav.js"></script>
+<script src="../assets/calculators.js"></script>
 </body>
 </html>

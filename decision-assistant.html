@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decision Assistant — Data Analytics Notebook</title>
+<meta name="description" content="An interactive decision assistant for data analysis. Answer a few questions about your data and goal and get a specific, reasoned recommendation — for missing values, outliers, encoding, scaling, metrics, models, and statistical tests.">
+<link rel="canonical" href="https://danotebook.protik.dev/decision-assistant.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Decision Assistant — Data Analytics Notebook">
+<meta property="og:description" content="Answer a few questions about your data and goal and get a specific, reasoned recommendation.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:url" content="https://danotebook.protik.dev/decision-assistant.html">
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="manifest" href="./site.webmanifest">
+<link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body data-slug="" data-num="0">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Interactive Tool</div>
+<h1 class="ch-title">Decision Assistant</h1>
+<p class="ch-desc">Don&rsquo;t guess &mdash; get a reasoned recommendation. Pick the decision you&rsquo;re facing, answer a couple of questions about your data and goal, and the assistant points you to the right method and the chapter that explains why.</p>
+<div class="front-hero">
+<h3>I have this data and this goal. What should I do next?</h3>
+<p>This turns the static decision trees in the handbook into a guided tool. Every recommendation links back to the full explanation, the trade-offs, and the leak-safe code.</p>
+<div class="front-badges"><span class="front-badge">Missing values</span><span class="front-badge">Outliers</span><span class="front-badge">Encoding</span><span class="front-badge">Scaling</span><span class="front-badge">Metrics</span><span class="front-badge">Model choice</span><span class="front-badge">Stat tests</span></div>
+</div>
+<div id="assistant"></div>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="./assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="./assets/chapters.js"></script>
+<script src="./assets/decisions.js"></script>
+<script src="./assets/nav.js"></script>
+<script>
+(function () {
+  var FLOWS = window.DECISIONS || [];
+  var root = document.getElementById('assistant');
+  if (!root) return;
+  var byKey = {};
+  FLOWS.forEach(function (f) { byKey[f.key] = f; });
+  var state = { flow: null, stack: [], path: [] };
+
+  function home() {
+    state.flow = null; state.stack = []; state.path = [];
+    var h = '<div class="section-title-plain" style="font-family:var(--font-display);font-size:17px;font-weight:700;color:inherit;margin:1.4rem 0 .3rem">What decision are you facing?</div>';
+    h += '<div class="da-pickers">';
+    FLOWS.forEach(function (f) {
+      h += '<button class="da-pick" data-act="start" data-key="' + f.key + '">' +
+        '<span class="da-ico">' + f.icon + '</span>' +
+        '<h4>' + f.title + '</h4><p>' + f.desc + '</p></button>';
+    });
+    h += '</div>';
+    root.innerHTML = h;
+  }
+
+  function current() { return state.stack[state.stack.length - 1]; }
+
+  function render() {
+    var f = state.flow;
+    var node = f.nodes[current()];
+    var h = '<div class="da-stage">';
+    // breadcrumbs
+    h += '<div class="da-crumbs"><button class="da-crumb" data-act="home">All decisions</button><span>&rsaquo;</span>' +
+      '<span class="da-crumb path">' + f.icon + ' ' + f.title + '</span>';
+    state.path.forEach(function (p) { h += '<span>&rsaquo;</span><span class="da-crumb">' + p + '</span>'; });
+    h += '</div>';
+
+    if (node.result) {
+      h += '<div class="da-result"><div class="da-rtag">Recommendation</div>';
+      h += '<h3>' + node.title + '</h3>';
+      h += '<div class="da-detail">' + node.detail + '</div>';
+      h += '<div class="da-rlinks">';
+      (node.links || []).forEach(function (l) {
+        h += '<a class="da-rlink' + (l.ghost ? ' ghost' : '') + '" href="' + l.href + '">' + l.text + ' &rarr;</a>';
+      });
+      h += '</div></div>';
+      h += '<div class="da-actions">' +
+        '<button class="da-rlink ghost" data-act="back">&larr; Back</button>' +
+        '<button class="da-rlink ghost" data-act="restart">Restart this decision</button>' +
+        '<button class="da-rlink" data-act="home">Try another decision</button></div>';
+    } else {
+      h += '<div class="da-q">' + node.q + '</div>';
+      if (node.help) h += '<div class="da-help">' + node.help + '</div>';
+      h += '<div class="da-opts">';
+      node.opts.forEach(function (o, i) {
+        h += '<button class="da-opt" data-act="opt" data-i="' + i + '"><span>' + o.label +
+          (o.sub ? '<span class="da-opt-sub">' + o.sub + '</span>' : '') + '</span><span class="da-arrow">&rarr;</span></button>';
+      });
+      h += '</div>';
+      h += '<div class="da-actions"><button class="da-rlink ghost" data-act="back">&larr; Back</button>' +
+        '<button class="da-rlink ghost" data-act="home">All decisions</button></div>';
+    }
+    h += '</div>';
+    root.innerHTML = h;
+    root.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  root.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    var act = btn.getAttribute('data-act');
+    if (act === 'start') { state.flow = byKey[btn.getAttribute('data-key')]; state.stack = [state.flow.start]; state.path = []; render(); }
+    else if (act === 'home') { home(); }
+    else if (act === 'restart') { state.stack = [state.flow.start]; state.path = []; render(); }
+    else if (act === 'back') {
+      if (state.stack.length > 1) { state.stack.pop(); state.path.pop(); render(); } else { home(); }
+    } else if (act === 'opt') {
+      var node = state.flow.nodes[current()];
+      var opt = node.opts[parseInt(btn.getAttribute('data-i'), 10)];
+      state.path.push(opt.label);
+      state.stack.push(opt.to);
+      render();
+    }
+  });
+
+  home();
+})();
+</script>
+</body>
+</html>

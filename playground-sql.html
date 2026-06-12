@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Playground — Data Analytics Notebook</title>
+<meta name="description" content="Run SQL queries against a sample database right in your browser. Practice joins, GROUP BY, CTEs, and window functions from the SQL for Analysts chapter — powered by SQLite (sql.js).">
+<link rel="canonical" href="https://danotebook.protik.dev/playground-sql.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SQL Playground — Data Analytics Notebook">
+<meta property="og:description" content="Run SQL against a sample database in your browser. Practice joins, GROUP BY, CTEs, and window functions.">
+<meta property="og:image" content="https://danotebook.protik.dev/share-image.jpg">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Protik Das Utso">
+<meta name="theme-color" content="#0d1117">
+<meta property="og:site_name" content="Data Analytics Notebook">
+<meta property="og:url" content="https://danotebook.protik.dev/playground-sql.html">
+<meta property="twitter:card" content="summary_large_image">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="manifest" href="./site.webmanifest">
+<link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body data-slug="" data-num="0">
+<div class="progress-wrap"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<button class="sb-open-btn" id="sbOpen" aria-label="Open sidebar">&#9776;</button>
+<aside class="sidebar" id="sidebar"></aside>
+<main class="content">
+<article class="chapter active">
+<div class="ch-tag">Interactive Tool</div>
+<h1 class="ch-title">SQL Playground</h1>
+<p class="ch-desc">Write and run real <strong>SQL</strong> against a small sample database, right in your browser. Practice the joins, aggregation, CTEs, and window functions from <a href="chapters/24-sql-for-analysts.html">Chapter 24</a>. Powered by SQLite compiled to WebAssembly (sql.js) &mdash; nothing leaves your machine.</p>
+<div class="note">First run downloads the SQLite engine (~1&nbsp;MB) and seeds three tables: <code>customers</code>, <code>orders</code>, <code>products</code>. Requires an internet connection to load the engine.</div>
+<div class="pg-presets" id="sqlPresets"></div>
+<div class="pg-toolbar">
+  <button class="da-rlink" id="sqlRun">&#9654; Run query</button>
+  <button class="da-rlink ghost" id="sqlReset">Reset database</button>
+  <span class="pg-status" id="sqlStatus">Ready — press Run to start.</span>
+</div>
+<textarea class="pg-editor" id="sqlCode" spellcheck="false"></textarea>
+<div class="pg-out-label">Result</div>
+<div class="pg-result" id="sqlOut">Results appear here.</div>
+<div class="pg-schema" id="sqlSchema"></div>
+</article>
+</main>
+<footer class="site-footer">
+  <div class="footer-profile">
+    <img class="footer-avatar" src="./assets/images/profile.jpg" alt="Profile photo" onerror="this.style.display='none'">
+    <div class="site-credit">Created by <strong>PROTIK DAS UTSO</strong></div>
+  </div>
+  <a class="wa-link" href="https://wa.me/8801883044415" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.53 0 .2 5.32.2 11.86c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.9 11.9 0 0 0 5.68 1.45h.01c6.53 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.14-3.41-8.44zm-8.45 18.29h-.01a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.79.99 1.01-3.69-.24-.38a9.89 9.89 0 0 1-1.52-5.23C2.08 6.42 6.55 1.95 12.05 1.95a9.9 9.9 0 0 1 7.04 2.92 9.86 9.86 0 0 1 2.9 7.02c0 5.5-4.47 9.97-9.92 9.98zm5.47-7.47c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.15-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.41-1.47-.89-.8-1.49-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.49-.5-.66-.5h-.56c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.5 0 1.47 1.08 2.89 1.23 3.09.15.2 2.12 3.24 5.14 4.54.72.31 1.29.5 1.73.64.73.23 1.4.2 1.92.12.59-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.12-.27-.2-.57-.35z"/></svg>
+    WhatsApp: +880 1883 044415
+  </a>
+</footer>
+<script src="./assets/chapters.js"></script>
+<script src="./assets/nav.js"></script>
+<script>
+(function () {
+  var SEED = [
+    "CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, category TEXT, price REAL);",
+    "INSERT INTO products VALUES (1,'Laptop','Electronics',1200),(2,'Phone','Electronics',800),(3,'Desk','Furniture',300),(4,'Chair','Furniture',150),(5,'Notebook','Stationery',5);",
+    "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT, country TEXT, signup_date TEXT);",
+    "INSERT INTO customers VALUES (1,'Aisha','Bangladesh','2024-01-05'),(2,'Bjorn','Sweden','2024-02-11'),(3,'Chen','Singapore','2024-02-20'),(4,'Diego','Mexico','2024-03-02'),(5,'Ella','Bangladesh','2024-03-15');",
+    "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, product_id INTEGER, quantity INTEGER, order_date TEXT, amount REAL);",
+    "INSERT INTO orders VALUES (1,1,1,1,'2024-04-01',1200),(2,1,5,4,'2024-04-03',20),(3,2,2,1,'2024-04-05',800),(4,3,3,2,'2024-04-06',600),(5,3,4,4,'2024-04-09',600),(6,4,2,1,'2024-04-10',800),(7,5,1,1,'2024-04-12',1200),(8,5,4,1,'2024-04-15',150),(9,1,2,1,'2024-04-18',800),(10,2,5,10,'2024-04-20',50);"
+  ].join('\n');
+
+  var EXAMPLES = {
+    'Browse a table': "SELECT * FROM customers;",
+    'JOIN': "SELECT o.id, c.name, p.name AS product, o.amount\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nJOIN products  p ON p.id = o.product_id\nORDER BY o.amount DESC;",
+    'GROUP BY': "SELECT c.country,\n       COUNT(*)        AS orders,\n       SUM(o.amount)   AS revenue\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.country\nORDER BY revenue DESC;",
+    'Window function': "SELECT name, country, spend,\n       RANK() OVER (ORDER BY spend DESC) AS rank\nFROM (\n  SELECT c.name, c.country, SUM(o.amount) AS spend\n  FROM customers c\n  JOIN orders o ON o.customer_id = c.id\n  GROUP BY c.id\n);",
+    'CTE': "WITH revenue AS (\n  SELECT customer_id, SUM(amount) AS total\n  FROM orders GROUP BY customer_id\n)\nSELECT c.name, r.total\nFROM revenue r\nJOIN customers c ON c.id = r.customer_id\nWHERE r.total > 800\nORDER BY r.total DESC;"
+  };
+
+  var code = document.getElementById('sqlCode');
+  var out = document.getElementById('sqlOut');
+  var statusEl = document.getElementById('sqlStatus');
+  var runBtn = document.getElementById('sqlRun');
+  var presets = document.getElementById('sqlPresets');
+  document.getElementById('sqlSchema').innerHTML = 'Schema: <code>products(id, name, category, price)</code> · <code>customers(id, name, country, signup_date)</code> · <code>orders(id, customer_id, product_id, quantity, order_date, amount)</code>';
+  code.value = EXAMPLES['JOIN'];
+
+  Object.keys(EXAMPLES).forEach(function (k) {
+    var b = document.createElement('button');
+    b.className = 'calc-btn'; b.textContent = k;
+    b.onclick = function () { code.value = EXAMPLES[k]; };
+    presets.appendChild(b);
+  });
+  code.addEventListener('keydown', function (e) {
+    if (e.key === 'Tab') { e.preventDefault(); var s = code.selectionStart, en = code.selectionEnd; code.value = code.value.slice(0, s) + '  ' + code.value.slice(en); code.selectionStart = code.selectionEnd = s + 2; }
+  });
+
+  var SQLlib = null, db = null;
+  function loadScript(src) { return new Promise(function (res, rej) { var s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = function () { rej(new Error('Failed to load ' + src)); }; document.head.appendChild(s); }); }
+
+  function seed() { db = new SQLlib.Database(); db.run(SEED); }
+  async function ensureDb() {
+    if (db) return;
+    if (!SQLlib) {
+      statusEl.textContent = 'Downloading SQLite engine…';
+      await loadScript('https://cdn.jsdelivr.net/npm/sql.js@1.12.0/dist/sql-wasm.js');
+      SQLlib = await initSqlJs({ locateFile: function (f) { return 'https://cdn.jsdelivr.net/npm/sql.js@1.12.0/dist/' + f; } });
+    }
+    seed();
+  }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function render(res) {
+    if (!res.length) { out.innerHTML = '<div class="pg-empty">Query ran successfully. No rows returned.</div>'; return; }
+    var r = res[0];
+    var h = '<div class="pg-table-wrap"><table class="pg-table"><thead><tr>';
+    r.columns.forEach(function (c) { h += '<th>' + esc(c) + '</th>'; });
+    h += '</tr></thead><tbody>';
+    r.values.forEach(function (row) { h += '<tr>' + row.map(function (v) { return '<td>' + (v === null ? '<span class="pg-null">NULL</span>' : esc(v)) + '</td>'; }).join('') + '</tr>'; });
+    h += '</tbody></table></div><div class="pg-rowcount">' + r.values.length + ' row' + (r.values.length === 1 ? '' : 's') + '</div>';
+    out.innerHTML = h;
+  }
+
+  async function run() {
+    runBtn.disabled = true;
+    try {
+      await ensureDb();
+      statusEl.textContent = 'Running…';
+      var res = db.exec(code.value);
+      render(res);
+      statusEl.textContent = 'Done ✓';
+    } catch (err) {
+      out.innerHTML = '<div class="pg-error">' + esc(err && err.message ? err.message : String(err)) + '</div>';
+      statusEl.textContent = 'Error — see result';
+    } finally {
+      runBtn.disabled = false;
+    }
+  }
+  runBtn.onclick = run;
+  document.getElementById('sqlReset').onclick = async function () { try { await ensureDb(); seed(); out.innerHTML = '<div class="pg-empty">Database reset to its original sample data.</div>'; statusEl.textContent = 'Database reset ✓'; } catch (e) {} };
+})();
+</script>
+</body>
+</html>
